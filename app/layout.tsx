@@ -42,8 +42,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
-
   return (
     <html lang="en" className={`${outfit.variable} ${inter.variable}`}>
       <head>
@@ -68,23 +66,19 @@ export default function RootLayout({
         {children}
         <SpeedInsights />
         <Analytics />
-        {gaId && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-              strategy="afterInteractive"
-            />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-1ZQ1FX3D8Q"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
 
-                gtag('config', '${gaId}');
-              `}
-            </Script>
-          </>
-        )}
+            gtag('config', 'G-1ZQ1FX3D8Q');
+          `}
+        </Script>
       </body>
     </html>
   );
