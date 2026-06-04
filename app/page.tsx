@@ -292,7 +292,7 @@ export default function Home() {
               className={`filter-chip ${platformFilter === "x" ? "active" : ""}`}
             >
               <XLogo size={16} />
-              X / Twitter <span className="filter-count">{stats.x}</span>
+              X (Twitter) <span className="filter-count">{stats.x}</span>
             </button>
             <button
               onClick={() => setPlatformFilter("facebook")}

@@ -389,8 +389,6 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
   border: 1px solid transparent;
 }
 
@@ -462,6 +460,7 @@ h1, h2, h3, h4, h5, h6 {
   gap: 0.5rem;
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
+  text-decoration: none;
   border: 1px solid var(--border-color);
   padding: 0.6rem 1rem;
   border-radius: var(--border-radius-md);
