@@ -28,7 +28,7 @@ GitHub Codebase: **[https://github.com/theshubh77/launchdb](https://github.com/t
 - **Framework**: Next.js (App Router, TypeScript)
 - **Styling**: Vanilla CSS (zero Tailwind CSS dependencies)
 - **Icons**: Phosphor Icons (`@phosphor-icons/react`)
-- **Deployment**: Cloudflare Pages (configured for fully static exports)
+- **Deployment**: Vercel (configured for fully static exports)
 
 ---
 
@@ -57,7 +57,7 @@ To clone and run LaunchDB locally:
    ```bash
    npm run build
    ```
-   The static files will be exported to the `out` directory, which can be uploaded directly to Cloudflare Pages or any static host.
+   The static files will be exported to the `out` directory, which can be deployed directly to Vercel or any static host.
 
 ---
 

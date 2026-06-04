@@ -50,7 +50,7 @@ The application is structured into the following semantic blocks:
 ## 4. Performance & Optimizations
 
 ### Static Export
-Next.js is configured for static exports (`output: 'export'`), allowing the entire site to be built as a set of flat HTML, CSS, and JS files. This guarantees page load times of under 100ms when served from the Cloudflare CDN edge.
+Next.js is configured for static exports (`output: 'export'`), allowing the entire site to be built as a set of flat HTML, CSS, and JS files. This guarantees page load times of under 100ms when served from the Vercel CDN edge.
 
 ### Real-time Fetch & Resilient Fallbacks
 Data is fetched on load from the master branch raw JSON:
