@@ -13,7 +13,8 @@ import {
   Database,
   Lightning,
   Sun,
-  Moon
+  Moon,
+  X
 } from "@phosphor-icons/react";
 import DirectoryCard from "../components/DirectoryCard";
 
@@ -31,9 +32,9 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [platformFilter, setPlatformFilter] = useState("all");
   const [visibleCount, setVisibleCount] = useState(24);
-  
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [mounted, setMounted] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -203,113 +204,137 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema) }}
       />
 
-      <nav className="top-nav">
-        <div className="container nav-container">
-          <a href="/" className="nav-logo">
-            <Database size={24} weight="fill" className="logo-icon" />
-            <span>LaunchDB</span>
-          </a>
-          <div className="nav-actions">
-            <a
-              href="https://github.com/theshubh77/awesome-saas-directories"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-github-link"
-              title="GitHub Source"
-            >
-              <GithubLogo size={22} weight="bold" />
+      <div className="top-header-group">
+        <nav className="top-nav">
+          <div className="container nav-container">
+            <a href="/" className="nav-logo">
+              <Database size={24} weight="fill" className="logo-icon" />
+              <span>LaunchDB</span>
             </a>
-            <button
-              onClick={toggleTheme}
-              className="theme-toggle-btn"
-              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-              title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-            >
-              {mounted ? (
-                theme === "dark" ? (
-                  <Sun size={20} weight="fill" />
+            <div className="nav-actions">
+              <a
+                href="https://github.com/theshubh77/awesome-saas-directories"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav-github-link"
+                title="GitHub Source"
+              >
+                <GithubLogo size={22} weight="bold" />
+              </a>
+              <button
+                onClick={toggleTheme}
+                className="theme-toggle-btn"
+                aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+                title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+              >
+                {mounted ? (
+                  theme === "dark" ? (
+                    <Sun size={20} weight="fill" />
+                  ) : (
+                    <Moon size={20} weight="fill" />
+                  )
                 ) : (
-                  <Moon size={20} weight="fill" />
-                )
-              ) : (
-                <div className="theme-toggle-placeholder" />
-              )}
-            </button>
+                  <div className="theme-toggle-placeholder" />
+                )}
+              </button>
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
 
-      <header className="hero-section">
-        <div className="container">
-          <div className="hero-tag">
-            <Lightning size={16} weight="fill" />
-            <span>120+ Active Directories & Launchpads</span>
+        <header className="hero-section">
+          <div className="container">
+            <div className="hero-tag">
+              <Lightning size={16} weight="fill" />
+              <span>120+ Active Directories & Launchpads</span>
+            </div>
+            <h1 className="hero-title">LaunchDB</h1>
+            <p className="hero-desc">
+              Discover 120+ platforms, subreddits, communities, and directories to submit your SaaS, build backlinks, and find early adopters.
+            </p>
           </div>
-          <h1 className="hero-title">LaunchDB</h1>
-          <p className="hero-desc">
-            Discover 120+ platforms, subreddits, communities, and directories to submit your SaaS, build backlinks, and find early adopters.
-          </p>
-        </div>
-      </header>
+        </header>
+      </div>
 
       <main className="container">
         {/* Controls Grid */}
-        <section className="controls-panel">
-          <div className="search-box">
-            <MagnifyingGlass size={20} className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search directories, communities..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="search-input"
-            />
-          </div>
+        <div className="controls-wrapper">
+          <section className={`controls-panel ${isMobileSearchOpen ? "search-open" : ""}`}>
+            <button 
+              type="button"
+              className="mobile-search-toggle" 
+              onClick={() => setIsMobileSearchOpen(true)}
+              aria-label="Open search"
+            >
+              <MagnifyingGlass size={20} />
+            </button>
 
-          <div className="filter-group">
-            <button
-              onClick={() => setPlatformFilter("all")}
-              className={`filter-chip ${platformFilter === "all" ? "active" : ""}`}
-            >
-              All <span className="filter-count">{stats.all}</span>
-            </button>
-            <button
-              onClick={() => setPlatformFilter("web")}
-              className={`filter-chip ${platformFilter === "web" ? "active" : ""}`}
-            >
-              <Globe size={16} />
-              Web Directory <span className="filter-count">{stats.web}</span>
-            </button>
-            <button
-              onClick={() => setPlatformFilter("reddit")}
-              className={`filter-chip ${platformFilter === "reddit" ? "active" : ""}`}
-            >
-              <RedditLogo size={16} />
-              Reddit <span className="filter-count">{stats.reddit}</span>
-            </button>
-            <button
-              onClick={() => setPlatformFilter("x")}
-              className={`filter-chip ${platformFilter === "x" ? "active" : ""}`}
-            >
-              <XLogo size={16} />
-              X (Twitter) <span className="filter-count">{stats.x}</span>
-            </button>
-            <button
-              onClick={() => setPlatformFilter("facebook")}
-              className={`filter-chip ${platformFilter === "facebook" ? "active" : ""}`}
-            >
-              <FacebookLogo size={16} />
-              Facebook <span className="filter-count">{stats.facebook}</span>
-            </button>
-            <button
-              onClick={() => setPlatformFilter("github")}
-              className={`filter-chip ${platformFilter === "github" ? "active" : ""}`}
-            >
-              <GithubLogo size={16} />
-              GitHub <span className="filter-count">{stats.github}</span>
-            </button>
-          </div>
-        </section>
+            <div className="search-box">
+              <MagnifyingGlass size={20} className="search-icon" />
+              <input
+                type="text"
+                placeholder="Search directories, communities..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="search-input"
+              />
+              <button 
+                type="button"
+                className="mobile-search-close" 
+                onClick={() => {
+                  setSearch(""); // clear search on close
+                  setIsMobileSearchOpen(false);
+                }}
+                aria-label="Close search"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="filter-group">
+              <button
+                onClick={() => setPlatformFilter("all")}
+                className={`filter-chip ${platformFilter === "all" ? "active" : ""}`}
+              >
+                All <span className="filter-count">{stats.all}</span>
+              </button>
+              <button
+                onClick={() => setPlatformFilter("web")}
+                className={`filter-chip ${platformFilter === "web" ? "active" : ""}`}
+              >
+                <Globe size={16} />
+                Web Directory <span className="filter-count">{stats.web}</span>
+              </button>
+              <button
+                onClick={() => setPlatformFilter("reddit")}
+                className={`filter-chip ${platformFilter === "reddit" ? "active" : ""}`}
+              >
+                <RedditLogo size={16} />
+                Reddit <span className="filter-count">{stats.reddit}</span>
+              </button>
+              <button
+                onClick={() => setPlatformFilter("x")}
+                className={`filter-chip ${platformFilter === "x" ? "active" : ""}`}
+              >
+                <XLogo size={16} />
+                X (Twitter) <span className="filter-count">{stats.x}</span>
+              </button>
+              <button
+                onClick={() => setPlatformFilter("facebook")}
+                className={`filter-chip ${platformFilter === "facebook" ? "active" : ""}`}
+              >
+                <FacebookLogo size={16} />
+                Facebook <span className="filter-count">{stats.facebook}</span>
+              </button>
+              <button
+                onClick={() => setPlatformFilter("github")}
+                className={`filter-chip ${platformFilter === "github" ? "active" : ""}`}
+              >
+                <GithubLogo size={16} />
+                GitHub <span className="filter-count">{stats.github}</span>
+              </button>
+            </div>
+          </section>
+        </div>
 
         {/* Directory Stats */}
         <div className="stats-bar">
