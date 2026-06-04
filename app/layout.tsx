@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "LaunchDB - 120+ SaaS Directories & Product Launchpads",
     description: "Submit your SaaS to the best directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.",
-    url: "https://launchdb.pages.dev",
+    url: "https://launchdb.vercel.app/",
     siteName: "LaunchDB",
     locale: "en_US",
     type: "website",

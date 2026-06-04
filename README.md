@@ -1,12 +1,12 @@
 # LaunchDB
 
-[![Cloudflare Pages](https://img.shields.io/badge/Deploy-Cloudflare%20Pages-0051C3?style=flat&logo=cloudflare&logoColor=white)](https://launchdb.pages.dev)
+[![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-000000?style=flat&logo=vercel&logoColor=white)](https://launchdb.vercel.app/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.2-000000?style=flat&logo=nextdotjs&logoColor=white)](https://nextjs.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](LICENSE)
 
 LaunchDB is a professional and intuitive open-source directory website mapping over 120+ platforms, subreddits, and SaaS directories where founders can launch their software, acquire early adopters, and build high-quality SEO backlink profiles.
 
-Live Website: **[https://launchdb.pages.dev](https://launchdb.pages.dev)**  
+Live Website: **[https://launchdb.vercel.app/](https://launchdb.vercel.app/)**  
 GitHub Codebase: **[https://github.com/theshubh77/launchdb](https://github.com/theshubh77/launchdb)**
 
 ---
