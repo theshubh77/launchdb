@@ -11,7 +11,9 @@ import {
   Globe, 
   BookOpen, 
   Database,
-  Lightning
+  Lightning,
+  Sun,
+  Moon
 } from "@phosphor-icons/react";
 import DirectoryCard from "../components/DirectoryCard";
 
@@ -29,8 +31,31 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [platformFilter, setPlatformFilter] = useState("all");
   const [visibleCount, setVisibleCount] = useState(24);
+  
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const [mounted, setMounted] = useState(false);
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // Sync theme with document attribute on mount
+  useEffect(() => {
+    setMounted(true);
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark";
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    } else {
+      const currentTheme = document.documentElement.getAttribute("data-theme") as "light" | "dark" || "dark";
+      setTheme(currentTheme);
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+    document.documentElement.setAttribute("data-theme", nextTheme);
+    localStorage.setItem("theme", nextTheme);
+  };
 
   // Fetch data on mount
   useEffect(() => {
@@ -177,6 +202,42 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema) }}
       />
+
+      <nav className="top-nav">
+        <div className="container nav-container">
+          <a href="/" className="nav-logo">
+            <Database size={24} weight="fill" className="logo-icon" />
+            <span>LaunchDB</span>
+          </a>
+          <div className="nav-actions">
+            <a
+              href="https://github.com/theshubh77/awesome-saas-directories"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-github-link"
+              title="GitHub Source"
+            >
+              <GithubLogo size={22} weight="bold" />
+            </a>
+            <button
+              onClick={toggleTheme}
+              className="theme-toggle-btn"
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+              title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+            >
+              {mounted ? (
+                theme === "dark" ? (
+                  <Sun size={20} weight="fill" />
+                ) : (
+                  <Moon size={20} weight="fill" />
+                )
+              ) : (
+                <div className="theme-toggle-placeholder" />
+              )}
+            </button>
+          </div>
+        </div>
+      </nav>
 
       <header className="hero-section">
         <div className="container">
