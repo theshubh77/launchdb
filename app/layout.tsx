@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   description: "Submit your SaaS to the best directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.",
   keywords: ["SaaS directories", "SaaS launch", "product launchpads", "indie hackers", "startup submit", "SEO backlinks", "get early users", "submit startup", "LaunchDB"],
   authors: [{ name: "LaunchDB Community" }],
+  verification: {
+    google: "HfkcazAHaDFansnXxLY1LSDeiDfJaSeXJZb-8W7hesc",
+  },
   openGraph: {
     title: "LaunchDB - 120+ SaaS Directories & Product Launchpads",
     description: "Submit your SaaS to the best directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.",
