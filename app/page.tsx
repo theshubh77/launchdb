@@ -14,7 +14,8 @@ import {
   Lightning,
   Sun,
   Moon,
-  X
+  X,
+  Plus
 } from "@phosphor-icons/react";
 import DirectoryCard from "../components/DirectoryCard";
 
@@ -35,6 +36,20 @@ export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [mounted, setMounted] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+
+  // Submit Directory Modal State
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [newDirName, setNewDirName] = useState("");
+  const [newDirDesc, setNewDirDesc] = useState("");
+  const [newDirLink, setNewDirLink] = useState("");
+  const [newDirPlatform, setNewDirPlatform] = useState<"web" | "reddit" | "x" | "facebook" | "github">("web");
+  const [isPlatformManuallySelected, setIsPlatformManuallySelected] = useState(false);
+  const [formErrors, setFormErrors] = useState<{ name?: string; description?: string; link?: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ success: boolean | null; message: string }>({
+    success: null,
+    message: "",
+  });
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -132,6 +147,153 @@ export default function Home() {
     setVisibleCount(24);
   }, [search, platformFilter]);
 
+  // Auto-detect platform from submission link
+  const detectPlatformFromLink = (link: string): "web" | "reddit" | "x" | "facebook" | "github" => {
+    const linkLower = link.trim().toLowerCase();
+    if (!linkLower) return "web";
+    
+    if (linkLower.includes("reddit.com")) return "reddit";
+    if (linkLower.includes("x.com") || linkLower.includes("twitter.com")) return "x";
+    if (linkLower.includes("facebook.com")) return "facebook";
+    if (linkLower.includes("github.com")) return "github";
+    
+    return "web";
+  };
+
+  // Handle link change with auto platform detection
+  const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setNewDirLink(value);
+    
+    if (formErrors.link) {
+      setFormErrors((prev) => ({ ...prev, link: undefined }));
+    }
+
+    if (!isPlatformManuallySelected) {
+      const detected = detectPlatformFromLink(value);
+      setNewDirPlatform(detected);
+    }
+  };
+
+  // Handle manual platform chip click
+  const handlePlatformSelect = (platform: "web" | "reddit" | "x" | "facebook" | "github") => {
+    setNewDirPlatform(platform);
+    setIsPlatformManuallySelected(true);
+  };
+
+  // Handle modal close
+  const handleCloseModal = () => {
+    setIsSubmitModalOpen(false);
+    setNewDirName("");
+    setNewDirDesc("");
+    setNewDirLink("");
+    setNewDirPlatform("web");
+    setIsPlatformManuallySelected(false);
+    setFormErrors({});
+    setIsSubmitting(false);
+    setSubmitStatus({ success: null, message: "" });
+  };
+
+  // Scroll lock when modal is open
+  useEffect(() => {
+    if (isSubmitModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSubmitModalOpen]);
+
+  // Form submit handler
+  const handleSubmitDirectory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    const errors: { name?: string; description?: string; link?: string } = {};
+    const trimmedName = newDirName.trim();
+    const trimmedDesc = newDirDesc.trim();
+    const trimmedLink = newDirLink.trim();
+
+    if (!trimmedName) {
+      errors.name = "Directory name is required";
+    } else if (trimmedName.length > 30) {
+      errors.name = "Directory name must be 30 characters or less";
+    }
+
+    if (!trimmedDesc) {
+      errors.description = "Description is required";
+    } else if (trimmedDesc.length > 140) {
+      errors.description = "Description must be 140 characters or less";
+    }
+
+    const urlRegex = /^https?:\/\/[^\s$.?#].[^\s]*$/i;
+    if (!trimmedLink) {
+      errors.link = "Submission link is required";
+    } else if (!urlRegex.test(trimmedLink)) {
+      errors.link = "Please enter a valid URL (starting with http:// or https://)";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus({ success: null, message: "" });
+
+    try {
+      const isDev = process.env.NODE_ENV === "development";
+      const apiUrl = isDev ? "http://localhost:3001" : "";
+      const res = await fetch(`${apiUrl}/api/submit-directory`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: trimmedName,
+          description: trimmedDesc,
+          link: trimmedLink,
+          platform: newDirPlatform,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Submission failed");
+      }
+
+      setSubmitStatus({
+        success: true,
+        message: `Successfully submitted! Created issue #${data.issueNumber}.`,
+      });
+
+      // Clear inputs
+      setNewDirName("");
+      setNewDirDesc("");
+      setNewDirLink("");
+      setNewDirPlatform("web");
+      setIsPlatformManuallySelected(false);
+      setFormErrors({});
+
+      // Auto close modal after brief delay
+      setTimeout(() => {
+        handleCloseModal();
+      }, 2500);
+
+    } catch (err: any) {
+      console.error("Submission error:", err);
+      setSubmitStatus({
+        success: false,
+        message: err.message || "An error occurred while submitting.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // Intersection Observer for lazy loading items
   useEffect(() => {
     if (loading || filteredData.length <= visibleCount) return;
@@ -212,6 +374,14 @@ export default function Home() {
               <span>LaunchDB</span>
             </a>
             <div className="nav-actions">
+              <button
+                onClick={() => setIsSubmitModalOpen(true)}
+                className="nav-submit-btn"
+                title="Submit Directory"
+              >
+                <Plus size={18} weight="bold" />
+                <span className="nav-submit-text">Submit Directory</span>
+              </button>
               <a
                 href="https://github.com/theshubh77/awesome-saas-directories"
                 target="_blank"
@@ -451,6 +621,153 @@ export default function Home() {
           </p>
         </div>
       </footer>
+
+      {/* Submit Directory Popup Modal */}
+      {isSubmitModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">Submit Directory</h2>
+              <button 
+                type="button" 
+                className="modal-close-btn" 
+                onClick={handleCloseModal} 
+                aria-label="Close form"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmitDirectory} className="modal-form" noValidate>
+              {submitStatus.message && (
+                <div className={`status-banner ${submitStatus.success ? "success" : "error"}`}>
+                  <span>{submitStatus.success ? "✓" : "⚠"} {submitStatus.message}</span>
+                </div>
+              )}
+
+              <div className="form-group">
+                <div className="form-label-row">
+                  <label htmlFor="dirName" className="form-label">Directory Name</label>
+                  <span className={`char-counter ${newDirName.length > 25 ? "warning" : ""}`}>
+                    {newDirName.length}/30
+                  </span>
+                </div>
+                <input
+                  id="dirName"
+                  type="text"
+                  placeholder="e.g. Product Hunt or r/SideProject"
+                  value={newDirName}
+                  onChange={(e) => {
+                    setNewDirName(e.target.value.slice(0, 30));
+                    if (formErrors.name) setFormErrors(prev => ({ ...prev, name: undefined }));
+                  }}
+                  className={`form-input ${formErrors.name ? "input-error" : ""}`}
+                  maxLength={30}
+                  required
+                />
+                {formErrors.name && <span className="error-message">{formErrors.name}</span>}
+              </div>
+
+              <div className="form-group">
+                <div className="form-label-row">
+                  <label htmlFor="dirDesc" className="form-label">Description</label>
+                  <span className={`char-counter ${newDirDesc.length > 120 ? "warning" : ""}`}>
+                    {newDirDesc.length}/140
+                  </span>
+                </div>
+                <textarea
+                  id="dirDesc"
+                  placeholder="e.g. A popular launch platform for sharing new tech products..."
+                  value={newDirDesc}
+                  onChange={(e) => {
+                    setNewDirDesc(e.target.value.slice(0, 140));
+                    if (formErrors.description) setFormErrors(prev => ({ ...prev, description: undefined }));
+                  }}
+                  className={`form-textarea ${formErrors.description ? "input-error" : ""}`}
+                  maxLength={140}
+                  rows={3}
+                  required
+                />
+                {formErrors.description && <span className="error-message">{formErrors.description}</span>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="dirLink" className="form-label">Submission Link</label>
+                <input
+                  id="dirLink"
+                  type="url"
+                  placeholder="e.g. https://www.producthunt.com/posts/new"
+                  value={newDirLink}
+                  onChange={handleLinkChange}
+                  className={`form-input ${formErrors.link ? "input-error" : ""}`}
+                  required
+                />
+                {formErrors.link && <span className="error-message">{formErrors.link}</span>}
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Platform Category</label>
+                <div className="platform-select-chips">
+                  <button
+                    type="button"
+                    onClick={() => handlePlatformSelect("web")}
+                    className={`platform-select-chip web ${newDirPlatform === "web" ? "active" : ""}`}
+                  >
+                    <Globe size={14} weight="bold" />
+                    <span>Web</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handlePlatformSelect("reddit")}
+                    className={`platform-select-chip reddit ${newDirPlatform === "reddit" ? "active" : ""}`}
+                  >
+                    <RedditLogo size={14} weight="fill" />
+                    <span>Reddit</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handlePlatformSelect("x")}
+                    className={`platform-select-chip x ${newDirPlatform === "x" ? "active" : ""}`}
+                  >
+                    <XLogo size={14} weight="bold" />
+                    <span>X</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handlePlatformSelect("facebook")}
+                    className={`platform-select-chip facebook ${newDirPlatform === "facebook" ? "active" : ""}`}
+                  >
+                    <FacebookLogo size={14} weight="fill" />
+                    <span>Facebook</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handlePlatformSelect("github")}
+                    className={`platform-select-chip github ${newDirPlatform === "github" ? "active" : ""}`}
+                  >
+                    <GithubLogo size={14} weight="fill" />
+                    <span>GitHub</span>
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" className="modal-submit-btn" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <ArrowClockwise size={16} className="animate-spin" style={{ marginRight: "0.5rem" }} />
+                    <span>Submitting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Plus size={16} weight="bold" />
+                    <span>Submit Directory</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }
