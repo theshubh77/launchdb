@@ -1,3 +1,44 @@
+const { z } = require('zod');
+
+const urlRegex = /^https?:\/\/(?:www\.)?(?!www\.)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/i;
+
+const submitDirectorySchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, "Directory name is required")
+    .max(30, "Directory name must be 30 characters or less"),
+  description: z.string()
+    .trim()
+    .min(1, "Description is required")
+    .max(140, "Description must be 140 characters or less"),
+  link: z.string()
+    .trim()
+    .min(1, "Submission link is required")
+    .superRefine((val, ctx) => {
+      const trimmed = val.trim();
+      const lower = trimmed.toLowerCase();
+      if (!lower.startsWith("http://") && !lower.startsWith("https://")) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "URL must start with http:// or https://"
+        });
+        return;
+      }
+      if (!urlRegex.test(trimmed)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Please enter a valid URL format (e.g. https://example.com)"
+        });
+      }
+    }),
+  platform: z.preprocess(
+    (val) => (typeof val === 'string' ? val.trim().toLowerCase() : val),
+    z.enum(["web", "reddit", "x", "facebook", "github"], {
+      message: "Invalid platform selected",
+    })
+  ),
+});
+
 module.exports = async function handler(request, response) {
   // CORS Headers
   response.setHeader('Access-Control-Allow-Credentials', true);
@@ -17,35 +58,13 @@ module.exports = async function handler(request, response) {
     return response.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { name, description, link, platform } = request.body;
-
-  if (!name || !description || !link || !platform) {
-    return response.status(400).json({ error: 'Missing required fields' });
+  const parseResult = submitDirectorySchema.safeParse(request.body);
+  if (!parseResult.success) {
+    const errorMessage = parseResult.error.issues[0].message;
+    return response.status(400).json({ error: errorMessage });
   }
 
-  // Trim and validate field values/lengths
-  const trimmedName = typeof name === 'string' ? name.trim() : '';
-  const trimmedDesc = typeof description === 'string' ? description.trim() : '';
-  const trimmedLink = typeof link === 'string' ? link.trim() : '';
-  const trimmedPlatform = typeof platform === 'string' ? platform.trim().toLowerCase() : '';
-
-  if (!trimmedName || trimmedName.length > 30) {
-    return response.status(400).json({ error: 'Directory name is required and must be 30 characters or less' });
-  }
-
-  if (!trimmedDesc || trimmedDesc.length > 140) {
-    return response.status(400).json({ error: 'Description is required and must be 140 characters or less' });
-  }
-
-  const urlRegex = /^https?:\/\/[^\s$.?#].[^\s]*$/i;
-  if (!trimmedLink || !urlRegex.test(trimmedLink)) {
-    return response.status(400).json({ error: 'Please provide a valid URL starting with http:// or https://' });
-  }
-
-  const allowedPlatforms = ['web', 'reddit', 'x', 'facebook', 'github'];
-  if (!allowedPlatforms.includes(trimmedPlatform)) {
-    return response.status(400).json({ error: 'Invalid platform selected' });
-  }
+  const { name: validatedName, description: validatedDesc, link: validatedLink, platform: validatedPlatform } = parseResult.data;
 
   const githubToken = process.env.GITHUB_TOKEN;
   if (!githubToken) {
@@ -53,19 +72,19 @@ module.exports = async function handler(request, response) {
   }
 
   // Format name with platform prefixes if not already done
-  let formattedName = trimmedName;
-  if (trimmedPlatform === "reddit" && !formattedName.toLowerCase().startsWith("r/")) {
+  let formattedName = validatedName;
+  if (validatedPlatform === "reddit" && !formattedName.toLowerCase().startsWith("r/")) {
     formattedName = `r/${formattedName}`;
-  } else if (trimmedPlatform === "x" && !formattedName.toLowerCase().startsWith("x/")) {
+  } else if (validatedPlatform === "x" && !formattedName.toLowerCase().startsWith("x/")) {
     formattedName = `x/${formattedName}`;
-  } else if (trimmedPlatform === "facebook" && !formattedName.toLowerCase().startsWith("fb/")) {
+  } else if (validatedPlatform === "facebook" && !formattedName.toLowerCase().startsWith("fb/")) {
     formattedName = `fb/${formattedName}`;
-  } else if (trimmedPlatform === "github" && !formattedName.toLowerCase().startsWith("gh/")) {
+  } else if (validatedPlatform === "github" && !formattedName.toLowerCase().startsWith("gh/")) {
     formattedName = `gh/${formattedName}`;
   }
 
   const title = `[Directory]: ${formattedName}`;
-  const body = `**Directory Name:**\n${formattedName}\n\n**Description:**\n${trimmedDesc}\n\n**Submit Link:**\n${trimmedLink}`;
+  const body = `**Directory Name:**\n${formattedName}\n\n**Description:**\n${validatedDesc}\n\n**Submit Link:**\n${validatedLink}`;
 
   try {
     const apiResponse = await fetch(
