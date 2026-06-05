@@ -926,8 +926,8 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   gap: 0.4rem;
   height: 40px;
-  padding: 0 1rem;
-  border-radius: var(--border-radius-md);
+  padding: 0 1.2rem;
+  border-radius: 9999px;
   background-color: var(--accent-primary);
   border: 1px solid var(--accent-primary);
   color: #ffffff;
@@ -959,7 +959,7 @@ h1, h2, h3, h4, h5, h6 {
   .nav-submit-btn {
     padding: 0;
     width: 40px;
-    border-radius: var(--border-radius-md);
+    border-radius: 50%;
   }
 }
 

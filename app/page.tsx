@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import { z } from "zod";
 import { 
   MagnifyingGlass, 
   ArrowClockwise, 
@@ -25,6 +26,43 @@ interface DirectoryItem {
   description: string;
   submission_link: string;
 }
+
+// URL regex with negative lookahead to prevent matching www as domain without secondary dot
+const urlRegex = /^https?:\/\/(?:www\.)?(?!www\.)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/i;
+
+const submitDirectorySchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, "Directory name is required")
+    .max(30, "Directory name must be 30 characters or less"),
+  description: z.string()
+    .trim()
+    .min(1, "Description is required")
+    .max(140, "Description must be 140 characters or less"),
+  link: z.string()
+    .trim()
+    .min(1, "Submission link is required")
+    .superRefine((val, ctx) => {
+      const trimmed = val.trim();
+      const lower = trimmed.toLowerCase();
+      if (!lower.startsWith("http://") && !lower.startsWith("https://")) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "URL must start with http:// or https://"
+        });
+        return;
+      }
+      if (!urlRegex.test(trimmed)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Please enter a valid URL format (e.g. https://example.com)"
+        });
+      }
+    }),
+  platform: z.enum(["web", "reddit", "x", "facebook", "github"], {
+    message: "Invalid platform selected",
+  }),
+});
 
 export default function Home() {
   const [allData, setAllData] = useState<DirectoryItem[]>([]);
@@ -160,18 +198,29 @@ export default function Home() {
     return "web";
   };
 
-  // Handle link change with auto platform detection
+  // Handle link change with auto platform detection and real-time URL validation
   const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setNewDirLink(value);
     
-    if (formErrors.link) {
-      setFormErrors((prev) => ({ ...prev, link: undefined }));
-    }
-
     if (!isPlatformManuallySelected) {
       const detected = detectPlatformFromLink(value);
       setNewDirPlatform(detected);
+    }
+
+    const trimmed = value.trim();
+    if (!trimmed) {
+      setFormErrors((prev) => ({ ...prev, link: undefined }));
+    } else {
+      const linkResult = submitDirectorySchema.shape.link.safeParse(trimmed);
+      if (!linkResult.success) {
+        setFormErrors((prev) => ({
+          ...prev,
+          link: linkResult.error.issues[0].message
+        }));
+      } else {
+        setFormErrors((prev) => ({ ...prev, link: undefined }));
+      }
     }
   };
 
@@ -211,37 +260,30 @@ export default function Home() {
     e.preventDefault();
     if (isSubmitting) return;
 
-    const errors: { name?: string; description?: string; link?: string } = {};
-    const trimmedName = newDirName.trim();
-    const trimmedDesc = newDirDesc.trim();
-    const trimmedLink = newDirLink.trim();
+    const result = submitDirectorySchema.safeParse({
+      name: newDirName,
+      description: newDirDesc,
+      link: newDirLink,
+      platform: newDirPlatform,
+    });
 
-    if (!trimmedName) {
-      errors.name = "Directory name is required";
-    } else if (trimmedName.length > 30) {
-      errors.name = "Directory name must be 30 characters or less";
-    }
-
-    if (!trimmedDesc) {
-      errors.description = "Description is required";
-    } else if (trimmedDesc.length > 140) {
-      errors.description = "Description must be 140 characters or less";
-    }
-
-    const urlRegex = /^https?:\/\/[^\s$.?#].[^\s]*$/i;
-    if (!trimmedLink) {
-      errors.link = "Submission link is required";
-    } else if (!urlRegex.test(trimmedLink)) {
-      errors.link = "Please enter a valid URL (starting with http:// or https://)";
-    }
-
-    if (Object.keys(errors).length > 0) {
+    if (!result.success) {
+      const errors: Record<string, string> = {};
+      result.error.issues.forEach((err) => {
+        if (err.path[0]) {
+          errors[err.path[0] as string] = err.message;
+        }
+      });
       setFormErrors(errors);
       return;
     }
 
+    const { name: validatedName, description: validatedDesc, link: validatedLink, platform: validatedPlatform } = result.data;
+
     setIsSubmitting(true);
     setSubmitStatus({ success: null, message: "" });
+
+    let userValidationError: string | null = null;
 
     try {
       const isDev = process.env.NODE_ENV === "development";
@@ -252,17 +294,25 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: trimmedName,
-          description: trimmedDesc,
-          link: trimmedLink,
-          platform: newDirPlatform,
+          name: validatedName,
+          description: validatedDesc,
+          link: validatedLink,
+          platform: validatedPlatform,
         }),
       });
 
-      const data = await res.json();
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch (e) {
+        // Fallback for non-JSON responses
+      }
 
       if (!res.ok) {
-        throw new Error(data.error || "Submission failed");
+        if (res.status === 400 && data.error) {
+          userValidationError = data.error;
+        }
+        throw new Error(userValidationError || "Something went wrong. Please try again later.");
       }
 
       setSubmitStatus({
@@ -285,9 +335,13 @@ export default function Home() {
 
     } catch (err: any) {
       console.error("Submission error:", err);
+      
+      // Show validation errors to the user, but mask system/config/network errors
+      const displayMessage = userValidationError || "Something went wrong. Please try again later.";
+
       setSubmitStatus({
         success: false,
-        message: err.message || "An error occurred while submitting.",
+        message: displayMessage,
       });
     } finally {
       setIsSubmitting(false);
@@ -374,14 +428,6 @@ export default function Home() {
               <span>LaunchDB</span>
             </a>
             <div className="nav-actions">
-              <button
-                onClick={() => setIsSubmitModalOpen(true)}
-                className="nav-submit-btn"
-                title="Submit Directory"
-              >
-                <Plus size={18} weight="bold" />
-                <span className="nav-submit-text">Submit Directory</span>
-              </button>
               <a
                 href="https://github.com/theshubh77/awesome-saas-directories"
                 target="_blank"
@@ -406,6 +452,14 @@ export default function Home() {
                 ) : (
                   <div className="theme-toggle-placeholder" />
                 )}
+              </button>
+              <button
+                onClick={() => setIsSubmitModalOpen(true)}
+                className="nav-submit-btn"
+                title="Submit Directory"
+              >
+                <Plus size={18} weight="bold" />
+                <span className="nav-submit-text">Submit Directory</span>
               </button>
             </div>
           </div>
