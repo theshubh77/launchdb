@@ -20,6 +20,7 @@ import {
   Plus
 } from "@phosphor-icons/react";
 import DirectoryCard from "../components/DirectoryCard";
+import StarBorder from "../components/StarBorder";
 
 interface DirectoryItem {
   id: number;
@@ -76,6 +77,8 @@ export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [mounted, setMounted] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isForceMobile, setIsForceMobile] = useState(false);
+  const desktopMinWidthRef = useRef<number>(0);
 
   // Submit Directory Modal State
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
@@ -259,6 +262,55 @@ export default function Home() {
       document.body.style.overflow = "";
     };
   }, [isSubmitModalOpen]);
+
+  // Dynamic wrap detection for the controls panel
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleResize = () => {
+      const width = window.innerWidth;
+
+      // If screen width is naturally below 1024px, let standard CSS media queries handle mobile layout
+      if (width < 1024) {
+        setIsForceMobile(false);
+        desktopMinWidthRef.current = 0;
+        return;
+      }
+
+      // If we are currently forcing mobile layout, check if window width has grown past the overflow point + buffer
+      if (isForceMobile) {
+        if (desktopMinWidthRef.current > 0 && width > desktopMinWidthRef.current + 30) {
+          setIsForceMobile(false);
+          setIsMobileSearchOpen(false); // Reset mobile search state when going back to desktop
+        }
+        return;
+      }
+
+      // Detect wrap in desktop layout by measuring child offsets
+      const searchBox = document.querySelector(".controls-panel .search-box") as HTMLElement;
+      const filterGroup = document.querySelector(".controls-panel .filter-group") as HTMLElement;
+
+      if (searchBox && filterGroup) {
+        const searchTop = searchBox.offsetTop;
+        const filterTop = filterGroup.offsetTop;
+
+        // If searchBox and filterGroup wrap onto different lines, their top offsets will differ
+        if (Math.abs(searchTop - filterTop) > 5) {
+          setIsForceMobile(true);
+          desktopMinWidthRef.current = width;
+        }
+      }
+    };
+
+    // Run measurement on layout render
+    const animId = requestAnimationFrame(handleResize);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isForceMobile]);
 
   // Turnstile Widget lifecycle management
   useEffect(() => {
@@ -479,7 +531,7 @@ export default function Home() {
   }, [allData]);
 
   return (
-    <>
+    <div className="page-dark-bg">
       {/* Schema injection for search engines & AI crawlers */}
       <script
         type="application/ld+json"
@@ -490,8 +542,7 @@ export default function Home() {
         <nav className="top-nav">
           <div className="container nav-container">
             <a href="/" className="nav-logo">
-              <Database size={24} weight="fill" className="logo-icon" />
-              <span>LaunchDB</span>
+              <span>🚀 LaunchDB</span>
             </a>
             <div className="nav-actions">
               <a
@@ -533,11 +584,20 @@ export default function Home() {
 
         <header className="hero-section">
           <div className="container">
-            <div className="hero-tag">
+            <StarBorder
+              as="div"
+              className="hero-tag-wrapper"
+              color="magenta"
+              speed="5s"
+              thickness={1}
+            >
               <Lightning size={16} weight="fill" />
               <span>120+ Active Directories & Launchpads</span>
-            </div>
-            <h1 className="hero-title">LaunchDB</h1>
+            </StarBorder>
+            <h1 className="hero-title">
+              <span>🚀</span>
+              <span className="hero-title-text">LaunchDB</span>
+            </h1>
             <p className="hero-desc">
               Discover 120+ platforms, subreddits, communities, and directories to submit your SaaS, build backlinks, and find early adopters.
             </p>
@@ -548,7 +608,7 @@ export default function Home() {
       <main className="container">
         {/* Controls Grid */}
         <div className="controls-wrapper">
-          <section className={`controls-panel ${isMobileSearchOpen ? "search-open" : ""}`}>
+          <section className={`controls-panel ${isMobileSearchOpen ? "search-open" : ""} ${isForceMobile ? "force-mobile" : ""}`}>
             <button 
               type="button"
               className="mobile-search-toggle" 
@@ -834,7 +894,7 @@ export default function Home() {
                     className={`platform-select-chip web ${newDirPlatform === "web" ? "active" : ""}`}
                   >
                     <Globe size={14} weight="bold" />
-                    <span>Web</span>
+                    <span>Web Directory</span>
                   </button>
                   <button
                     type="button"
@@ -850,7 +910,7 @@ export default function Home() {
                     className={`platform-select-chip x ${newDirPlatform === "x" ? "active" : ""}`}
                   >
                     <XLogo size={14} weight="bold" />
-                    <span>X</span>
+                    <span>X (Twitter)</span>
                   </button>
                   <button
                     type="button"
@@ -904,6 +964,6 @@ export default function Home() {
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" 
         strategy="afterInteractive" 
       />
-    </>
+    </div>
   );
 }
