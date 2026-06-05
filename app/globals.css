@@ -1195,6 +1195,19 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--bg-primary);
 }
 
+.turnstile-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  min-height: 65px;
+}
+
+.turnstile-error {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
 /* Submit Modal CTA Button */
 .modal-submit-btn {
   display: inline-flex;
@@ -1207,7 +1220,7 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--accent-primary);
   border: 1px solid var(--accent-primary);
   color: #ffffff;
-  border-radius: var(--border-radius-md);
+  border-radius: 9999px;
   font-family: var(--font-sans);
   font-weight: 600;
   font-size: 0.95rem;
@@ -1218,6 +1231,12 @@ h1, h2, h3, h4, h5, h6 {
 .modal-submit-btn:hover {
   background-color: var(--accent-hover);
   border-color: var(--accent-hover);
+}
+
+.modal-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* Animations for modal entry */

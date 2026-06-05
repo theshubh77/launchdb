@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import Script from "next/script";
 import { z } from "zod";
 import { 
   MagnifyingGlass, 
@@ -62,6 +63,7 @@ const submitDirectorySchema = z.object({
   platform: z.enum(["web", "reddit", "x", "facebook", "github"], {
     message: "Invalid platform selected",
   }),
+  turnstileToken: z.string().min(1, "Please complete the security check"),
 });
 
 export default function Home() {
@@ -82,8 +84,11 @@ export default function Home() {
   const [newDirLink, setNewDirLink] = useState("");
   const [newDirPlatform, setNewDirPlatform] = useState<"web" | "reddit" | "x" | "facebook" | "github">("web");
   const [isPlatformManuallySelected, setIsPlatformManuallySelected] = useState(false);
-  const [formErrors, setFormErrors] = useState<{ name?: string; description?: string; link?: string }>({});
+  const [formErrors, setFormErrors] = useState<{ name?: string; description?: string; link?: string; turnstile?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileContainerRef = useRef<HTMLDivElement>(null);
+  const turnstileWidgetIdRef = useRef<string | null>(null);
   const [submitStatus, setSubmitStatus] = useState<{ success: boolean | null; message: string }>({
     success: null,
     message: "",
@@ -255,6 +260,65 @@ export default function Home() {
     };
   }, [isSubmitModalOpen]);
 
+  // Turnstile Widget lifecycle management
+  useEffect(() => {
+    if (isSubmitModalOpen && typeof window !== "undefined") {
+      const renderTurnstile = () => {
+        const turnstile = (window as any).turnstile;
+        if (turnstile && turnstileContainerRef.current) {
+          if (turnstileWidgetIdRef.current) {
+            try {
+              turnstile.remove(turnstileWidgetIdRef.current);
+            } catch (e) {
+              // Ignore
+            }
+          }
+          
+          const widgetId = turnstile.render(turnstileContainerRef.current, {
+            sitekey: "0x4AAAAAADfY5f5eyqmjXZrK",
+            theme: theme === "dark" ? "dark" : "light",
+            callback: (token: string) => {
+              setTurnstileToken(token);
+              setFormErrors((prev) => ({ ...prev, turnstile: undefined }));
+            },
+            "expired-callback": () => {
+              setTurnstileToken(null);
+            },
+            "error-callback": () => {
+              setTurnstileToken(null);
+            }
+          });
+          turnstileWidgetIdRef.current = widgetId;
+        }
+      };
+
+      const turnstile = (window as any).turnstile;
+      if (turnstile) {
+        renderTurnstile();
+      } else {
+        const interval = setInterval(() => {
+          const t = (window as any).turnstile;
+          if (t) {
+            renderTurnstile();
+            clearInterval(interval);
+          }
+        }, 100);
+        return () => clearInterval(interval);
+      }
+    } else {
+      const turnstile = (window as any).turnstile;
+      if (turnstile && turnstileWidgetIdRef.current) {
+        try {
+          turnstile.remove(turnstileWidgetIdRef.current);
+        } catch (e) {
+          // Ignore
+        }
+        turnstileWidgetIdRef.current = null;
+      }
+      setTurnstileToken(null);
+    }
+  }, [isSubmitModalOpen, theme]);
+
   // Form submit handler
   const handleSubmitDirectory = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -265,6 +329,7 @@ export default function Home() {
       description: newDirDesc,
       link: newDirLink,
       platform: newDirPlatform,
+      turnstileToken: turnstileToken || "",
     });
 
     if (!result.success) {
@@ -278,7 +343,7 @@ export default function Home() {
       return;
     }
 
-    const { name: validatedName, description: validatedDesc, link: validatedLink, platform: validatedPlatform } = result.data;
+    const { name: validatedName, description: validatedDesc, link: validatedLink, platform: validatedPlatform, turnstileToken: validatedToken } = result.data;
 
     setIsSubmitting(true);
     setSubmitStatus({ success: null, message: "" });
@@ -298,6 +363,7 @@ export default function Home() {
           description: validatedDesc,
           link: validatedLink,
           platform: validatedPlatform,
+          turnstileToken: validatedToken,
         }),
       });
 
@@ -805,7 +871,17 @@ export default function Home() {
                 </div>
               </div>
 
-              <button type="submit" className="modal-submit-btn" disabled={isSubmitting}>
+              {/* Cloudflare Turnstile CAPTCHA */}
+              <div className="turnstile-wrapper">
+                <div ref={turnstileContainerRef} />
+              </div>
+              {formErrors.turnstile && (
+                <span className="error-message turnstile-error">
+                  {formErrors.turnstile}
+                </span>
+              )}
+
+              <button type="submit" className="modal-submit-btn" disabled={isSubmitting || !turnstileToken}>
                 {isSubmitting ? (
                   <>
                     <ArrowClockwise size={16} className="animate-spin" style={{ marginRight: "0.5rem" }} />
@@ -822,6 +898,12 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* Load Cloudflare Turnstile script dynamically */}
+      <Script 
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" 
+        strategy="afterInteractive" 
+      />
     </>
   );
 }

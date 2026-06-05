@@ -37,6 +37,7 @@ const submitDirectorySchema = z.object({
       message: "Invalid platform selected",
     })
   ),
+  turnstileToken: z.string().min(1, "Please complete the security check"),
 });
 
 module.exports = async function handler(request, response) {
@@ -64,7 +65,37 @@ module.exports = async function handler(request, response) {
     return response.status(400).json({ error: errorMessage });
   }
 
-  const { name: validatedName, description: validatedDesc, link: validatedLink, platform: validatedPlatform } = parseResult.data;
+  const { name: validatedName, description: validatedDesc, link: validatedLink, platform: validatedPlatform, turnstileToken: validatedToken } = parseResult.data;
+
+  // Verify Cloudflare Turnstile token
+  const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+  if (!turnstileSecret) {
+    return response.status(500).json({ error: 'Turnstile secret not configured on server' });
+  }
+
+  try {
+    const turnstileResponse = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          secret: turnstileSecret,
+          response: validatedToken,
+        }),
+      }
+    );
+
+    const turnstileResult = await turnstileResponse.json();
+    if (!turnstileResult.success) {
+      return response.status(400).json({ error: 'Security check failed. Please try again.' });
+    }
+  } catch (error) {
+    console.error('Turnstile verification error:', error);
+    return response.status(500).json({ error: 'Internal server error during verification' });
+  }
 
   const githubToken = process.env.GITHUB_TOKEN;
   if (!githubToken) {
