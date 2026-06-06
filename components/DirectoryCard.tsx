@@ -123,7 +123,7 @@ export default function DirectoryCard({ item }: DirectoryCardProps) {
           rel="noopener noreferrer"
           className="submit-btn"
         >
-          Submit Product
+          <span className="submit-btn-text">Submit Product</span>
           <ArrowUpRight size={18} />
         </a>
       </div>

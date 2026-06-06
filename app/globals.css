@@ -197,10 +197,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-desc {
   font-size: 1.15rem;
-  color: var(--text-secondary);
+  color: #cbd5e1; /* high-contrast, premium slate gray on dark mode */
   max-width: 600px;
   margin: 0 auto 2rem auto;
   line-height: 1.6;
+}
+
+:root[data-theme="light"] .hero-desc {
+  color: #475569; /* balanced dark slate gray for light mode */
 }
 
 /* Control & Filter Panel */
@@ -824,6 +828,31 @@ h1, h2, h3, h4, h5, h6 {
   color: #ffffff;
 }
 
+.submit-btn-text {
+  position: relative;
+  display: inline-block;
+}
+
+.submit-btn-text::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0) translateZ(0);
+  height: 1px;
+  bottom: -1px;
+  left: 0;
+  background-color: currentColor;
+  transform-origin: right center;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.submit-btn:hover .submit-btn-text::after {
+  transform: scaleX(1) translateZ(0);
+  transform-origin: left center;
+}
+
 .submit-btn svg {
   color: var(--text-secondary);
   transition: transform var(--transition-fast), color var(--transition-fast);
@@ -944,8 +973,12 @@ h1, h2, h3, h4, h5, h6 {
 .faq-section {
   margin-top: 6rem;
   margin-bottom: 6rem;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid #2e3b4e; /* clearly visible, premium slate-blue border on dark mode */
   padding-top: 4rem;
+}
+
+:root[data-theme="light"] .faq-section {
+  border-top: 1px solid var(--border-color);
 }
 
 .faq-title {
@@ -996,12 +1029,17 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Footer Section */
 .site-footer {
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid #2e3b4e; /* clearly visible, premium slate-blue border on dark mode */
   padding: 2.5rem 0;
   background-color: transparent;
   text-align: center;
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: #cbd5e1;
+}
+
+:root[data-theme="light"] .site-footer {
+  border-top: 1px solid var(--border-color);
+  color: #000000;
 }
 
 .footer-content {
@@ -1014,36 +1052,64 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .footer-author-link {
-  color: var(--text-primary);
+  color: inherit;
   font-weight: 600;
   text-decoration: none;
+  position: relative;
+  display: inline-block;
   transition: color var(--transition-fast);
 }
 
+.footer-author-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0) translateZ(0);
+  height: 1px;
+  bottom: -1px;
+  left: 0;
+  background-color: currentColor;
+  transform-origin: right center;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.footer-author-link:hover::after {
+  transform: scaleX(1) translateZ(0);
+  transform-origin: left center;
+}
+
 .footer-author-link:hover {
-  color: var(--accent-primary);
+  color: var(--text-primary);
 }
 
 /* Pulsing Heart Animation */
 .pulsing-heart {
   display: inline-block;
   color: #ff453a;
-  animation: heart-pulse 1.2s infinite ease-in-out;
-  margin: 0 0.25rem;
+  animation: heart-pulse 1.4s infinite ease-in-out;
+  margin: 0 0.12rem;
 }
 
 @keyframes heart-pulse {
-  0%, 100% {
+  0% {
     transform: scale(1);
   }
-  25% {
-    transform: scale(1.15);
+  12% {
+    transform: scale(1.22);
   }
-  50% {
+  24% {
     transform: scale(1);
   }
-  75% {
-    transform: scale(1.15);
+  36% {
+    transform: scale(1.22);
+  }
+  48% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
