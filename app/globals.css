@@ -224,18 +224,29 @@ h1, h2, h3, h4, h5, h6 {
   background: transparent;
   transition: background-color var(--transition-normal);
 }
+/* Base styling for sticky background patch (hidden by default) */
+.controls-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: 100%;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+}
 
-/* Stuck state background patch - Desktop (min-width: 1024px) */
+/* Stuck state opacity */
+.controls-wrapper.is-sticky::before {
+  opacity: 1;
+  transition: opacity 0.35s ease-out;
+}
+
+/* Background patch - Desktop (min-width: 1024px) */
 @media (min-width: 1024px) {
-  .controls-wrapper.is-sticky::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100vw;
-    height: 100%;
-    z-index: -1;
+  .controls-wrapper::before {
     background-color: var(--bg-primary);
     background-image: 
       radial-gradient(circle 600px at 50% 150px, rgba(139, 92, 246, 0.35), transparent),
@@ -244,23 +255,15 @@ h1, h2, h3, h4, h5, h6 {
     background-attachment: fixed;
   }
   
-  :root[data-theme="light"] .controls-wrapper.is-sticky::before {
+  :root[data-theme="light"] .controls-wrapper::before {
     background-image: radial-gradient(125% 125% at 50% 80px, #fff 40%, #7c3aed 100%);
     background-attachment: fixed;
   }
 }
 
-/* Stuck state background patch - Mobile & Tablet (max-width: 1023px) */
+/* Background patch - Mobile & Tablet (max-width: 1023px) */
 @media (max-width: 1023px) {
-  .controls-wrapper.is-sticky::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100vw;
-    height: 100%;
-    z-index: -1;
+  .controls-wrapper::before {
     background-color: var(--bg-primary);
     background-image: 
       radial-gradient(circle 600px at 50% 150px, rgba(139, 92, 246, 0.35), transparent),
@@ -269,7 +272,7 @@ h1, h2, h3, h4, h5, h6 {
     background-attachment: scroll;
   }
   
-  :root[data-theme="light"] .controls-wrapper.is-sticky::before {
+  :root[data-theme="light"] .controls-wrapper::before {
     background-image: radial-gradient(125% 125% at 50% 80px, #fff 40%, #7c3aed 100%);
     background-attachment: scroll;
   }
