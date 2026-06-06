@@ -4,6 +4,7 @@ import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
+import fallbackData from "../public/launchdb-fallback.json";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -17,17 +18,24 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+function getFormattedCount(count: number): string {
+  if (count < 50) return `${count}`;
+  return `${Math.floor(count / 50) * 50}+`;
+}
+
+const formattedCount = getFormattedCount(fallbackData.length);
+
 export const metadata: Metadata = {
-  title: "LaunchDB - 120+ SaaS Directories & Product Launchpads",
-  description: "Submit your SaaS to the best directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.",
+  title: `LaunchDB - ${formattedCount} SaaS Directories & Product Launchpads`,
+  description: `Submit your SaaS to the best ${formattedCount} directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.`,
   keywords: ["SaaS directories", "SaaS launch", "product launchpads", "indie hackers", "startup submit", "SEO backlinks", "get early users", "submit startup", "LaunchDB"],
   authors: [{ name: "LaunchDB Community" }],
   verification: {
     google: "HfkcazAHaDFansnXxLY1LSDeiDfJaSeXJZb-8W7hesc",
   },
   openGraph: {
-    title: "LaunchDB - 120+ SaaS Directories & Product Launchpads",
-    description: "Submit your SaaS to the best directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.",
+    title: `LaunchDB - ${formattedCount} SaaS Directories & Product Launchpads`,
+    description: `Submit your SaaS to the best ${formattedCount} directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.`,
     url: "https://launchdb.vercel.app/",
     siteName: "LaunchDB",
     locale: "en_US",
@@ -35,8 +43,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "LaunchDB - 120+ SaaS Directories & Product Launchpads",
-    description: "Submit your SaaS to the best directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.",
+    title: `LaunchDB - ${formattedCount} SaaS Directories & Product Launchpads`,
+    description: `Submit your SaaS to the best ${formattedCount} directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.`,
   },
   icons: {
     icon: [

@@ -21,6 +21,7 @@ import {
 } from "@phosphor-icons/react";
 import DirectoryCard from "../components/DirectoryCard";
 import StarBorder from "../components/StarBorder";
+import fallbackData from "../public/launchdb-fallback.json";
 
 interface DirectoryItem {
   id: number;
@@ -79,6 +80,13 @@ export default function Home() {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isForceMobile, setIsForceMobile] = useState(false);
   const desktopMinWidthRef = useRef<number>(0);
+
+  // Dynamic count formatting
+  const formattedCount = useMemo(() => {
+    const count = allData.length > 0 ? allData.length : fallbackData.length;
+    if (count < 50) return `${count}`;
+    return `${Math.floor(count / 50) * 50}+`;
+  }, [allData]);
 
   // Submit Directory Modal State
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
@@ -513,8 +521,8 @@ export default function Home() {
     return {
       "@context": "https://schema.org",
       "@type": "ItemList",
-      "name": "LaunchDB SaaS Directories",
-      "description": "A curated directory database of places to launch your SaaS product, get backlinks, and reach early users.",
+      "name": `LaunchDB - ${formattedCount} SaaS Directories & Product Launchpads`,
+      "description": `A curated directory database of ${formattedCount} platforms and directories to launch your SaaS product, get backlinks, and reach early users.`,
       "numberOfItems": allData.length,
       "itemListElement": allData.slice(0, 50).map((item, index) => ({
         "@type": "ListItem",
@@ -592,14 +600,14 @@ export default function Home() {
               thickness={1}
             >
               <Lightning size={16} weight="fill" />
-              <span>120+ Active Directories & Launchpads</span>
+              <span>{formattedCount} Active Directories & Launchpads</span>
             </StarBorder>
             <h1 className="hero-title">
               <span>🚀</span>
               <span className="hero-title-text">LaunchDB</span>
             </h1>
             <p className="hero-desc">
-              Discover 120+ platforms, subreddits, communities, and directories to submit your SaaS, build backlinks, and find early adopters.
+              Discover {formattedCount} platforms, subreddits, communities, and directories to submit your SaaS, build backlinks, and find early adopters.
             </p>
           </div>
         </header>
@@ -752,7 +760,7 @@ export default function Home() {
                 <BookOpen size={22} /> What is LaunchDB?
               </h3>
               <p className="faq-answer">
-                LaunchDB is a professional open-source directory listing platform for SaaS startups. It indexes over 120+ platforms, directory sites, subreddits, and communities where founders can launch their software to get traffic, feedback, and high-quality SEO backlink profiles.
+                LaunchDB is a professional open-source directory listing platform for SaaS startups. It indexes over {formattedCount} platforms, directory sites, subreddits, and communities where founders can launch their software to get traffic, feedback, and high-quality SEO backlink profiles.
               </p>
             </div>
             
