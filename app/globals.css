@@ -128,7 +128,7 @@ body {
   background-color: var(--bg-primary);
   background-image: 
     radial-gradient(circle 600px at 50% 150px, rgba(139, 92, 246, 0.35), transparent),
-    radial-gradient(circle 1000px at 80% 85%, rgba(99, 102, 241, 0.18), transparent);
+    radial-gradient(circle 1000px at 80% 85vh, rgba(99, 102, 241, 0.18), transparent);
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
@@ -138,9 +138,8 @@ body {
   z-index: 1;
 }
 
-:root[data-theme="light"] .page-dark-bg,
-:root[data-theme="light"] .controls-wrapper {
-  background-image: radial-gradient(125% 125% at 50% 10%, #fff 40%, #7c3aed 100%);
+:root[data-theme="light"] .page-dark-bg {
+  background-image: radial-gradient(125% 125% at 50% 80px, #fff 40%, #7c3aed 100%);
   background-attachment: fixed;
 }
 
@@ -208,20 +207,72 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Control & Filter Panel */
+.scroll-sentinel {
+  height: 1px;
+  margin-top: -1px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .controls-wrapper {
   position: sticky;
   top: 0;
   z-index: 90;
-  background-color: var(--bg-primary);
-  background-image: 
-    radial-gradient(circle 600px at 50% 150px, rgba(139, 92, 246, 0.35), transparent),
-    radial-gradient(circle 1000px at 80% 85%, rgba(99, 102, 241, 0.18), transparent);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
   margin-top: -0.75rem;
+  background: transparent;
   transition: background-color var(--transition-normal);
+}
+
+/* Stuck state background patch - Desktop (min-width: 1024px) */
+@media (min-width: 1024px) {
+  .controls-wrapper.is-sticky::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 100%;
+    z-index: -1;
+    background-color: var(--bg-primary);
+    background-image: 
+      radial-gradient(circle 600px at 50% 150px, rgba(139, 92, 246, 0.35), transparent),
+      radial-gradient(circle 1000px at 80% 85vh, rgba(99, 102, 241, 0.18), transparent);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+  
+  :root[data-theme="light"] .controls-wrapper.is-sticky::before {
+    background-image: radial-gradient(125% 125% at 50% 80px, #fff 40%, #7c3aed 100%);
+    background-attachment: fixed;
+  }
+}
+
+/* Stuck state background patch - Mobile & Tablet (max-width: 1023px) */
+@media (max-width: 1023px) {
+  .controls-wrapper.is-sticky::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 100%;
+    z-index: -1;
+    background-color: var(--bg-primary);
+    background-image: 
+      radial-gradient(circle 600px at 50% 150px, rgba(139, 92, 246, 0.35), transparent),
+      radial-gradient(circle 1000px at 80% 85vh, rgba(99, 102, 241, 0.18), transparent);
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+  }
+  
+  :root[data-theme="light"] .controls-wrapper.is-sticky::before {
+    background-image: radial-gradient(125% 125% at 50% 80px, #fff 40%, #7c3aed 100%);
+    background-attachment: scroll;
+  }
 }
 
 .mobile-search-toggle {

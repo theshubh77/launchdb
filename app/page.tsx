@@ -86,19 +86,45 @@ export default function Home() {
   const [isForceMobile, setIsForceMobile] = useState(false);
   const desktopMinWidthRef = useRef<number>(0);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isSticky, setIsSticky] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   // Back to Top visibility controller
   useEffect(() => {
+    let active = true;
     const handleScroll = () => {
+      if (!active) return;
       if (window.scrollY > 300) {
         setShowBackToTop(true);
       } else {
         setShowBackToTop(false);
       }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
+      active = false;
       window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // IntersectionObserver to detect when the controls wrapper becomes sticky
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSticky(!entry.isIntersecting);
+      },
+      {
+        threshold: [0],
+        rootMargin: "-1px 0px 0px 0px", // triggers exactly when sentinel scrolls out of view at top of viewport
+      }
+    );
+
+    observer.observe(sentinel);
+    return () => {
+      observer.unobserve(sentinel);
     };
   }, []);
 
@@ -667,8 +693,10 @@ export default function Home() {
       </div>
 
       <main className="container">
+        {/* Sentinel to detect when controls become sticky */}
+        <div ref={sentinelRef} className="scroll-sentinel" />
         {/* Controls Grid */}
-        <div className="controls-wrapper">
+        <div className={`controls-wrapper ${isSticky ? "is-sticky" : ""}`}>
           <section className={`controls-panel ${isMobileSearchOpen ? "search-open" : ""} ${isForceMobile ? "force-mobile" : ""}`}>
             <button 
               type="button"
