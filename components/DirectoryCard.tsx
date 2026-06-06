@@ -9,6 +9,7 @@ import {
   GithubLogo, 
   Globe 
 } from "@phosphor-icons/react";
+import BorderGlow from "./BorderGlow";
 
 interface DirectoryItem {
   id: number;
@@ -19,9 +20,10 @@ interface DirectoryItem {
 
 interface DirectoryCardProps {
   item: DirectoryItem;
+  theme: "light" | "dark";
 }
 
-export default function DirectoryCard({ item }: DirectoryCardProps) {
+export default function DirectoryCard({ item, theme }: DirectoryCardProps) {
   const { name, description, submission_link } = item;
   const [faviconError, setFaviconError] = useState(false);
 
@@ -87,8 +89,8 @@ export default function DirectoryCard({ item }: DirectoryCardProps) {
     ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64`
     : null;
 
-  return (
-    <article className="card">
+  const cardContent = (
+    <>
       <div className="card-header">
         <div className="favicon-wrapper">
           {faviconUrl && !faviconError ? (
@@ -127,6 +129,32 @@ export default function DirectoryCard({ item }: DirectoryCardProps) {
           <ArrowUpRight size={18} />
         </a>
       </div>
-    </article>
+    </>
+  );
+
+  if (theme === "light") {
+    return (
+      <article className="card">
+        {cardContent}
+      </article>
+    );
+  }
+
+  return (
+    <BorderGlow
+      edgeSensitivity={30}
+      glowColor="260 80 80"
+      backgroundColor="var(--bg-secondary)"
+      borderRadius={16}
+      glowRadius={30}
+      glowIntensity={0.6}
+      coneSpread={30}
+      animated={false}
+      colors={['#8b5cf6', '#6366f1', '#a855f7']}
+    >
+      <article className="card" style={{ background: 'transparent', border: 'none', boxShadow: 'none', height: '100%', padding: '1.5rem', transform: 'none' }}>
+        {cardContent}
+      </article>
+    </BorderGlow>
   );
 }

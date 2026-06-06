@@ -17,10 +17,12 @@ import {
   Sun,
   Moon,
   X,
-  Plus
+  Plus,
+  CaretUp
 } from "@phosphor-icons/react";
 import DirectoryCard from "../components/DirectoryCard";
 import StarBorder from "../components/StarBorder";
+import ClickSpark from "../components/ClickSpark";
 import fallbackData from "../public/launchdb-fallback.json";
 
 interface DirectoryItem {
@@ -80,6 +82,29 @@ export default function Home() {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isForceMobile, setIsForceMobile] = useState(false);
   const desktopMinWidthRef = useRef<number>(0);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  // Back to Top visibility controller
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   // Dynamic count formatting
   const formattedCount = useMemo(() => {
@@ -540,11 +565,18 @@ export default function Home() {
 
   return (
     <div className="page-dark-bg">
-      {/* Schema injection for search engines & AI crawlers */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema) }}
-      />
+      <ClickSpark
+        sparkColor={theme === "light" ? "magenta" : "#ffffff"}
+        sparkSize={10}
+        sparkRadius={20}
+        sparkCount={8}
+        duration={400}
+      >
+        {/* Schema injection for search engines & AI crawlers */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema) }}
+        />
 
       <div className="top-header-group">
         <nav className="top-nav">
@@ -730,7 +762,7 @@ export default function Home() {
         ) : filteredData.length > 0 ? (
           <section className="directory-grid">
             {visibleItems.map((item) => (
-              <DirectoryCard key={item.id} item={item} />
+              <DirectoryCard key={item.id} item={item} theme={theme} />
             ))}
           </section>
         ) : (
@@ -967,11 +999,21 @@ export default function Home() {
         </div>
       )}
 
+      <button
+        onClick={scrollToTop}
+        className={`back-to-top-btn ${showBackToTop ? "visible" : ""}`}
+        aria-label="Back to top"
+        title="Back to top"
+      >
+        <CaretUp size={24} weight="bold" />
+      </button>
+
       {/* Load Cloudflare Turnstile script dynamically */}
       <Script 
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" 
         strategy="afterInteractive" 
       />
+      </ClickSpark>
     </div>
   );
 }

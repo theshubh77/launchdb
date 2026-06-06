@@ -973,7 +973,7 @@ h1, h2, h3, h4, h5, h6 {
 .faq-section {
   margin-top: 6rem;
   margin-bottom: 6rem;
-  border-top: 1px solid #2e3b4e; /* clearly visible, premium slate-blue border on dark mode */
+  border-top: 1px solid rgba(255, 255, 255, 0.25); /* brighter semi-transparent white border on dark mode */
   padding-top: 4rem;
 }
 
@@ -1029,7 +1029,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Footer Section */
 .site-footer {
-  border-top: 1px solid #2e3b4e; /* clearly visible, premium slate-blue border on dark mode */
+  border-top: 1px solid rgba(255, 255, 255, 0.25); /* brighter semi-transparent white border on dark mode */
   padding: 2.5rem 0;
   background-color: transparent;
   text-align: center;
@@ -1568,4 +1568,54 @@ h1, h2, h3, h4, h5, h6 {
   background-color: rgba(239, 68, 68, 0.1);
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Floating Back to Top Action Button */
+.back-to-top-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all var(--transition-normal);
+}
+
+:root[data-theme="light"] .back-to-top-btn {
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.back-to-top-btn.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top-btn:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-hover);
+  color: var(--accent-primary);
+  transform: translateY(-3px);
+}
+
+/* Mobile responsive padding and position */
+@media (max-width: 640px) {
+  .back-to-top-btn {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
 }
