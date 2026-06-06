@@ -1167,7 +1167,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1.25rem;
+  font-size: 1.45rem;
   font-weight: 700;
   font-family: var(--font-outfit);
   color: var(--text-primary);
@@ -1360,8 +1360,26 @@ h1, h2, h3, h4, h5, h6 {
   }
   .nav-submit-btn {
     padding: 0;
-    width: 40px;
+    width: 32px !important;
+    height: 32px !important;
     border-radius: 50%;
+  }
+  .nav-submit-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  .nav-github-link,
+  .theme-toggle-btn,
+  .bmc-link {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  .nav-github-link svg,
+  .theme-toggle-btn svg,
+  .bmc-logo,
+  .theme-toggle-placeholder {
+    width: 26px !important;
+    height: 26px !important;
   }
 }
 
