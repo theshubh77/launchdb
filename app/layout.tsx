@@ -38,6 +38,15 @@ export const metadata: Metadata = {
     title: "LaunchDB - 120+ SaaS Directories & Product Launchpads",
     description: "Submit your SaaS to the best directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.",
   },
+  icons: {
+    icon: [
+      { url: "/favicon-64x64.png", sizes: "64x64", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({
