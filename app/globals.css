@@ -1033,7 +1033,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 2.5rem 0;
   background-color: transparent;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #cbd5e1;
 }
 
@@ -1049,6 +1049,34 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   gap: 0.5rem;
   text-align: center;
+}
+
+.footer-text {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.footer-socials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.footer-social-link {
+  color: inherit;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+
+.footer-social-link:hover {
+  color: inherit;
+  opacity: 0.6;
+  transform: translateY(-2px) scale(1.05);
 }
 
 .footer-author-link {
@@ -1132,7 +1160,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
+  height: 72px;
 }
 
 .nav-logo {
@@ -1162,56 +1190,100 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .nav-github-link {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: var(--border-radius-md);
-  color: var(--text-secondary);
-  border: 1px solid transparent;
-  transition: all var(--transition-fast);
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: transform var(--transition-normal);
 }
 
 .nav-github-link:hover {
+  background-color: transparent;
   color: var(--text-primary);
-  background-color: var(--bg-tertiary);
-  border-color: var(--border-color);
+  transform: translateY(-2px) scale(1.12);
+}
+
+.nav-github-link:hover svg {
+  animation: github-float 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .theme-toggle-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: var(--border-radius-md);
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
   color: var(--text-primary);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: transform var(--transition-normal);
 }
 
 .theme-toggle-btn:hover {
-  background-color: var(--bg-tertiary);
-  border-color: var(--border-hover);
-  color: var(--accent-primary);
+  background-color: transparent;
+  color: var(--text-primary);
+  transform: translateY(-2px) scale(1.12);
+}
+
+.theme-toggle-btn:hover .moon-icon {
+  animation: moon-drift 2.5s ease-in-out infinite;
+}
+
+.theme-toggle-btn:hover .sun-icon {
+  animation: sun-rotate 4s linear infinite;
 }
 
 .theme-toggle-placeholder {
-  width: 20px;
-  height: 20px;
+  width: 34px;
+  height: 34px;
+}
+
+@keyframes moon-drift {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-15deg);
+  }
+}
+
+@keyframes sun-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes github-float {
+  0%, 100% {
+    transform: translateY(2px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 /* Submit Directory Header Button */
 .nav-submit-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
   height: 40px;
   padding: 0 1.2rem;
+  margin: 0;
   border-radius: 9999px;
   background-color: var(--accent-primary);
   border: 1px solid var(--accent-primary);
@@ -1235,6 +1307,51 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-submit-btn svg {
   color: #ffffff;
+}
+
+/* Buy Me A Coffee Header Logo Link */
+.bmc-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius-md);
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: transform var(--transition-normal);
+}
+
+.bmc-link:hover {
+  background-color: transparent;
+  transform: translateY(-2px) scale(1.12);
+}
+
+.bmc-logo {
+  width: 34px;
+  height: 34px;
+  display: block;
+  transition: transform var(--transition-fast);
+}
+
+.bmc-logo-placeholder {
+  width: 34px;
+  height: 34px;
+}
+
+@keyframes bmc-shake {
+  0%, 100% { transform: rotate(0deg) scale(1.05); }
+  20% { transform: rotate(-8deg) scale(1.05); }
+  40% { transform: rotate(6deg) scale(1.05); }
+  60% { transform: rotate(-4deg) scale(1.05); }
+  80% { transform: rotate(3deg) scale(1.05); }
+}
+
+.bmc-link:hover .bmc-logo {
+  animation: bmc-shake 0.85s ease-in-out infinite;
 }
 
 @media (max-width: 640px) {

@@ -10,6 +10,9 @@ import {
   RedditLogo, 
   XLogo, 
   FacebookLogo, 
+  InstagramLogo,
+  LinkedinLogo,
+  MediumLogo,
   Globe, 
   BookOpen, 
   Database,
@@ -582,7 +585,8 @@ export default function Home() {
         <nav className="top-nav">
           <div className="container nav-container">
             <a href="/" className="nav-logo">
-              <span>🚀 LaunchDB</span>
+              <span className="logo-emoji">🚀</span>
+              <span className="logo-text">LaunchDB</span>
             </a>
             <div className="nav-actions">
               <a
@@ -592,7 +596,7 @@ export default function Home() {
                 className="nav-github-link"
                 title="GitHub Source"
               >
-                <GithubLogo size={22} weight="bold" />
+                <GithubLogo size={34} weight="light" />
               </a>
               <button
                 onClick={toggleTheme}
@@ -602,14 +606,31 @@ export default function Home() {
               >
                 {mounted ? (
                   theme === "dark" ? (
-                    <Sun size={20} weight="fill" />
+                    <Sun size={34} weight="light" className="sun-icon" />
                   ) : (
-                    <Moon size={20} weight="fill" />
+                    <Moon size={34} weight="light" className="moon-icon" />
                   )
                 ) : (
                   <div className="theme-toggle-placeholder" />
                 )}
               </button>
+              <a 
+                href="https://buymeacoffee.com/theshubh77"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bmc-link"
+                title="Buy Me a Coffee"
+              >
+                {mounted ? (
+                  <img 
+                    src={theme === "dark" ? "/assets/bmc-logo-dark.svg" : "/assets/bmc-logo-light.svg"} 
+                    alt="Buy Me a Coffee" 
+                    className="bmc-logo"
+                  />
+                ) : (
+                  <div className="bmc-logo-placeholder" />
+                )}
+              </a>
               <button
                 onClick={() => setIsSubmitModalOpen(true)}
                 className="nav-submit-btn"
@@ -828,8 +849,8 @@ export default function Home() {
 
       <footer className="site-footer">
         <div className="container footer-content">
-          <p>
-            © 2026 LaunchDB. Built with <span className="pulsing-heart">❤️</span> by{" "}
+          <p className="footer-text">
+            Built with <span className="pulsing-heart">❤️</span> by{" "}
             <a 
               href="https://linktr.ee/theshubh77" 
               target="_blank" 
@@ -839,6 +860,62 @@ export default function Home() {
               Shubham Bhamare
             </a>
           </p>
+          <div className="footer-socials">
+            <a 
+              href="https://facebook.com/theshubh77" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="Facebook" 
+              className="footer-social-link"
+            >
+              <FacebookLogo size={24} />
+            </a>
+            <a 
+              href="https://instagram.com/theshubh77" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="Instagram" 
+              className="footer-social-link"
+            >
+              <InstagramLogo size={24} />
+            </a>
+            <a 
+              href="https://linkedin.com/in/theshubh77" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="LinkedIn" 
+              className="footer-social-link"
+            >
+              <LinkedinLogo size={24} />
+            </a>
+            <a 
+              href="https://github.com/theshubh77" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="GitHub" 
+              className="footer-social-link"
+            >
+              <GithubLogo size={24} />
+            </a>
+            <a 
+              href="https://x.com/theshubh77" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="X" 
+              className="footer-social-link"
+            >
+              <XLogo size={24} />
+            </a>
+            <a 
+              href="https://medium.com/@theshubh77" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="Medium" 
+              className="footer-social-link"
+            >
+              <MediumLogo size={24} />
+            </a>
+          </div>
         </div>
       </footer>
 
