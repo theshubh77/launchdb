@@ -21,7 +21,8 @@ import {
   Moon,
   X,
   Plus,
-  CaretUp
+  CaretUp,
+  Spinner
 } from "@phosphor-icons/react";
 import DirectoryCard from "../components/DirectoryCard";
 import StarBorder from "../components/StarBorder";
@@ -152,6 +153,7 @@ export default function Home() {
   const [formErrors, setFormErrors] = useState<{ name?: string; description?: string; link?: string; turnstile?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [isTurnstileLoading, setIsTurnstileLoading] = useState(true);
   const turnstileContainerRef = useRef<HTMLDivElement>(null);
   const turnstileWidgetIdRef = useRef<string | null>(null);
   const [submitStatus, setSubmitStatus] = useState<{ success: boolean | null; message: string }>({
@@ -171,6 +173,14 @@ export default function Home() {
     } else {
       const currentTheme = document.documentElement.getAttribute("data-theme") as "light" | "dark" || "dark";
       setTheme(currentTheme);
+    }
+
+    // Check search params for ?submit flag
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has("submit")) {
+        setIsSubmitModalOpen(true);
+      }
     }
   }, []);
 
@@ -311,6 +321,16 @@ export default function Home() {
     setFormErrors({});
     setIsSubmitting(false);
     setSubmitStatus({ success: null, message: "" });
+    setIsTurnstileLoading(true);
+
+    // Remove ?submit from URL search params if present
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has("submit")) {
+        url.searchParams.delete("submit");
+        window.history.replaceState({}, "", url.pathname + url.search);
+      }
+    }
   };
 
   // Scroll lock when modal is open
@@ -376,7 +396,12 @@ export default function Home() {
 
   // Turnstile Widget lifecycle management
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    let observer: MutationObserver;
+
     if (isSubmitModalOpen && typeof window !== "undefined") {
+      setIsTurnstileLoading(true);
+
       const renderTurnstile = () => {
         const turnstile = (window as any).turnstile;
         if (turnstile && turnstileContainerRef.current) {
@@ -387,19 +412,42 @@ export default function Home() {
               // Ignore
             }
           }
-          
+
+          // Setup observer before render to catch the iframe insertion
+          observer = new MutationObserver((mutations) => {
+            const iframe = turnstileContainerRef.current?.querySelector("iframe");
+            if (iframe) {
+              iframe.onload = () => {
+                setIsTurnstileLoading(false);
+                clearTimeout(timeoutId);
+              };
+              observer.disconnect();
+            }
+          });
+          observer.observe(turnstileContainerRef.current, { childList: true, subtree: true });
+
+          // Fallback timeout in case iframe onload doesn't fire or CORS limits it
+          timeoutId = setTimeout(() => {
+            setIsTurnstileLoading(false);
+            if (observer) observer.disconnect();
+          }, 5000);
+
           const widgetId = turnstile.render(turnstileContainerRef.current, {
             sitekey: "0x4AAAAAADfY5f5eyqmjXZrK",
             theme: theme === "dark" ? "dark" : "light",
             callback: (token: string) => {
               setTurnstileToken(token);
               setFormErrors((prev) => ({ ...prev, turnstile: undefined }));
+              setIsTurnstileLoading(false);
+              clearTimeout(timeoutId);
             },
             "expired-callback": () => {
               setTurnstileToken(null);
             },
             "error-callback": () => {
               setTurnstileToken(null);
+              setIsTurnstileLoading(false);
+              clearTimeout(timeoutId);
             }
           });
           turnstileWidgetIdRef.current = widgetId;
@@ -417,7 +465,11 @@ export default function Home() {
             clearInterval(interval);
           }
         }, 100);
-        return () => clearInterval(interval);
+        return () => {
+          clearInterval(interval);
+          clearTimeout(timeoutId);
+          if (observer) observer.disconnect();
+        };
       }
     } else {
       const turnstile = (window as any).turnstile;
@@ -430,7 +482,13 @@ export default function Home() {
         turnstileWidgetIdRef.current = null;
       }
       setTurnstileToken(null);
+      setIsTurnstileLoading(false);
     }
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (observer) observer.disconnect();
+    };
   }, [isSubmitModalOpen, theme]);
 
   // Form submit handler
@@ -1078,7 +1136,19 @@ export default function Home() {
 
               {/* Cloudflare Turnstile CAPTCHA */}
               <div className="turnstile-wrapper">
-                <div ref={turnstileContainerRef} />
+                {isTurnstileLoading && (
+                  <div className="turnstile-loading">
+                    <Spinner size={16} className="animate-spin" />
+                    <span>Loading security check...</span>
+                  </div>
+                )}
+                <div 
+                  ref={turnstileContainerRef} 
+                  style={{ 
+                    visibility: isTurnstileLoading ? "hidden" : "visible", 
+                    position: isTurnstileLoading ? "absolute" : "static" 
+                  }} 
+                />
               </div>
               {formErrors.turnstile && (
                 <span className="error-message turnstile-error">

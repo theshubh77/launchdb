@@ -1484,7 +1484,7 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 640px;
   max-height: 90vh;
   overflow-y: auto;
-  padding: 2rem;
+  padding: 1.5rem 2rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
@@ -1516,14 +1516,21 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Modal Header styling */
 .modal-header {
+  position: sticky;
+  top: -1.5rem;
+  z-index: 10;
+  background-color: var(--bg-secondary);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.25rem;
+  padding: 1.5rem 0 0.75rem 0;
+  margin-top: -1.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .modal-title {
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -1695,6 +1702,18 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: -0.25rem;
   margin-bottom: -0.5rem;
   min-height: 65px;
+  position: relative;
+}
+
+.turnstile-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  height: 65px;
+  width: 100%;
 }
 
 .turnstile-error {
@@ -1830,5 +1849,19 @@ h1, h2, h3, h4, h5, h6 {
     right: 1.5rem;
     width: 2.75rem;
     height: 2.75rem;
+  }
+}
+
+/* Spinner Rotate Animation */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
