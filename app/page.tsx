@@ -53,6 +53,8 @@ const submitDirectorySchema = z.object({
     .min(1, "Submission link is required")
     .superRefine((val, ctx) => {
       const trimmed = val.trim();
+      if (trimmed.length === 0) return; // Skip format validation if empty (handled by min(1))
+
       const lower = trimmed.toLowerCase();
       if (!lower.startsWith("http://") && !lower.startsWith("https://")) {
         ctx.addIssue({
@@ -73,6 +75,59 @@ const submitDirectorySchema = z.object({
   }),
   turnstileToken: z.string().min(1, "Please complete the security check"),
 });
+
+const HINT_DATA = [
+  {
+    name: "Product Hunt",
+    description: "The most popular platform to discover your next favorite tech product.",
+    link: "https://www.producthunt.com/posts/new"
+  },
+  {
+    name: "BetaList",
+    description: "Discover and get early access to tomorrow's startups.",
+    link: "https://betalist.com/submissions/new"
+  },
+  {
+    name: "SaaSHub",
+    description: "The independent software marketplace and alternative finder.",
+    link: "https://www.saashub.com/services/submit"
+  },
+  {
+    name: "AlternativeTo",
+    description: "Crowdsourced software recommendations.",
+    link: "https://alternativeto.net/manage-item/"
+  },
+  {
+    name: "Uneed",
+    description: "A hand-curated directory for the best tools and resources on the internet.",
+    link: "https://www.uneed.best/submit-a-tool"
+  },
+  {
+    name: "Indie Hackers",
+    description: "A community of developers and founders. Includes a database of self-funded products.",
+    link: "https://www.indiehackers.com/products/"
+  },
+  {
+    name: "Peerlist Launchpad",
+    description: "A professional network where you can showcase your work and launch new projects.",
+    link: "https://peerlist.io/launchpad"
+  },
+  {
+    name: "DEV Community",
+    description: "A community of software developers where you can share articles and new tools.",
+    link: "https://dev.to/new"
+  },
+  {
+    name: "Hacker News",
+    description: "A social news website focusing on computer science, entrepreneurship, and product launches.",
+    link: "https://news.ycombinator.com/submit"
+  },
+  {
+    name: "There's An AI For That",
+    description: "A comprehensive directory and database for discovering AI products and tools.",
+    link: "https://theresanaiforthat.com/launch/"
+  }
+];
 
 export default function Home() {
   const [allData, setAllData] = useState<DirectoryItem[]>([]);
@@ -161,6 +216,9 @@ export default function Home() {
     message: "",
   });
 
+  const [currentHintIndex, setCurrentHintIndex] = useState(0);
+  const [isPlaceholderFaded, setIsPlaceholderFaded] = useState(false);
+
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   // Sync theme with document attribute on mount
@@ -183,6 +241,34 @@ export default function Home() {
       }
     }
   }, []);
+
+  // Placeholders hint rotation interval
+  useEffect(() => {
+    if (!isSubmitModalOpen) return;
+
+    // Pick a random initial index when modal opens
+    const initialIndex = Math.floor(Math.random() * HINT_DATA.length);
+    setCurrentHintIndex(initialIndex);
+
+    const interval = setInterval(() => {
+      // 1. Fade out placeholder opacity
+      setIsPlaceholderFaded(true);
+
+      // 2. Wait for transition (500ms), then swap and fade back in
+      setTimeout(() => {
+        setCurrentHintIndex((prev) => {
+          let nextIndex = prev;
+          while (nextIndex === prev) {
+            nextIndex = Math.floor(Math.random() * HINT_DATA.length);
+          }
+          return nextIndex;
+        });
+        setIsPlaceholderFaded(false);
+      }, 500);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isSubmitModalOpen]);
 
   const toggleTheme = () => {
     const nextTheme = theme === "dark" ? "light" : "dark";
@@ -1028,6 +1114,19 @@ export default function Home() {
                 </div>
               )}
 
+              <p className="modal-description">
+                Thank you for suggesting a new directory! Before submitting, please check the{" "}
+                <a 
+                  href="https://github.com/theshubh77/awesome-saas-directories/blob/main/CONTRIBUTING.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="modal-link"
+                >
+                  Contribution Guidelines
+                </a>{" "}
+                to ensure your submission meets our criteria.
+              </p>
+
               <div className="form-group">
                 <div className="form-label-row">
                   <label htmlFor="dirName" className="form-label">Directory Name</label>
@@ -1038,13 +1137,13 @@ export default function Home() {
                 <input
                   id="dirName"
                   type="text"
-                  placeholder="e.g. Product Hunt or r/SideProject"
+                  placeholder={`e.g. ${HINT_DATA[currentHintIndex].name}`}
                   value={newDirName}
                   onChange={(e) => {
                     setNewDirName(e.target.value.slice(0, 30));
                     if (formErrors.name) setFormErrors(prev => ({ ...prev, name: undefined }));
                   }}
-                  className={`form-input ${formErrors.name ? "input-error" : ""}`}
+                  className={`form-input ${formErrors.name ? "input-error" : ""} ${isPlaceholderFaded ? "placeholder-fade" : ""}`}
                   maxLength={30}
                   required
                 />
@@ -1060,13 +1159,13 @@ export default function Home() {
                 </div>
                 <textarea
                   id="dirDesc"
-                  placeholder="e.g. A popular launch platform for sharing new tech products..."
+                  placeholder={`e.g. ${HINT_DATA[currentHintIndex].description}`}
                   value={newDirDesc}
                   onChange={(e) => {
                     setNewDirDesc(e.target.value.slice(0, 140));
                     if (formErrors.description) setFormErrors(prev => ({ ...prev, description: undefined }));
                   }}
-                  className={`form-textarea ${formErrors.description ? "input-error" : ""}`}
+                  className={`form-textarea ${formErrors.description ? "input-error" : ""} ${isPlaceholderFaded ? "placeholder-fade" : ""}`}
                   maxLength={140}
                   rows={3}
                   required
@@ -1079,10 +1178,10 @@ export default function Home() {
                 <input
                   id="dirLink"
                   type="url"
-                  placeholder="e.g. https://www.producthunt.com/posts/new"
+                  placeholder={`e.g. ${HINT_DATA[currentHintIndex].link}`}
                   value={newDirLink}
                   onChange={handleLinkChange}
-                  className={`form-input ${formErrors.link ? "input-error" : ""}`}
+                  className={`form-input ${formErrors.link ? "input-error" : ""} ${isPlaceholderFaded ? "placeholder-fade" : ""}`}
                   required
                 />
                 {formErrors.link && <span className="error-message">{formErrors.link}</span>}

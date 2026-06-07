@@ -1594,6 +1594,17 @@ h1, h2, h3, h4, h5, h6 {
   transition: all var(--transition-fast);
 }
 
+.form-input::placeholder,
+.form-textarea::placeholder {
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.form-input.placeholder-fade::placeholder,
+.form-textarea.placeholder-fade::placeholder {
+  opacity: 0;
+}
+
 .form-textarea {
   resize: vertical;
   min-height: 84px;
@@ -1864,4 +1875,23 @@ h1, h2, h3, h4, h5, h6 {
   to {
     transform: rotate(360deg);
   }
+}
+
+.modal-description {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.modal-link {
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.modal-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
 }
