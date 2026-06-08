@@ -222,6 +222,7 @@ h1, h2, h3, h4, h5, h6 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
   margin-top: -0.75rem;
+  margin-bottom: 0.75rem; /* Prevents stats-bar showing results text from being clipped by sticky controls */
   background: transparent;
   transition: background-color var(--transition-normal);
 }

@@ -30,7 +30,7 @@ import DirectoryCard from "../components/DirectoryCard";
 import StarBorder from "../components/StarBorder";
 import ClickSpark from "../components/ClickSpark";
 import fallbackData from "../public/launchdb-fallback.json";
-import { addUtmToUrl } from "./utils/url";
+import { addUtmToUrl, removeUtmFromUrl } from "./utils/url";
 
 interface DirectoryItem {
   id: number;
@@ -211,7 +211,7 @@ export default function Home() {
       return {
         name: matched?.name || name,
         description: matched?.description || "Suggest a new directory tool...",
-        link: matched?.submission_link || "https://example.com"
+        link: matched?.submission_link ? removeUtmFromUrl(matched.submission_link) : "https://example.com"
       };
     });
   }, [allData]);
@@ -449,9 +449,12 @@ export default function Home() {
     });
   }, [allData, search, platformFilter]);
 
-  // Reset items count when filter changes
+  // Reset items count when filter changes and scroll to top of directory grid if scrolled down
   useEffect(() => {
     setVisibleCount(24);
+    if (typeof window !== "undefined" && window.scrollY > 300 && sentinelRef.current) {
+      sentinelRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   }, [search, platformFilter]);
 
   // Auto-detect platform from submission link

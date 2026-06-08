@@ -12,3 +12,14 @@ export function addUtmToUrl(url: string, utmSource: string = "launchdb.vercel.ap
     return url;
   }
 }
+
+export function removeUtmFromUrl(url: string): string {
+  if (!url || !url.startsWith("http")) return url;
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.delete("utm_source");
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
