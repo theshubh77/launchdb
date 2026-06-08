@@ -300,7 +300,7 @@ h1, h2, h3, h4, h5, h6 {
   height: 3.825rem;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  transition: border-radius var(--transition-normal);
+  transition: border-radius var(--transition-normal), border-color 0.2s ease, box-shadow 0.2s ease, background-color var(--transition-normal);
 }
 
 :root[data-theme="light"] .controls-panel {
@@ -561,6 +561,39 @@ h1, h2, h3, h4, h5, h6 {
   outline: none;
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Unified smooth focused states for mobile and forced-mobile search to prevent double-pill borders */
+.search-open.controls-panel {
+  background-color: var(--bg-tertiary);
+}
+
+.search-open.controls-panel:focus-within {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
+:root[data-theme="light"] .search-open.controls-panel:focus-within {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+.search-open .search-box {
+  height: 100%;
+}
+
+.search-open .search-input {
+  height: 100% !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding-left: 2.75rem;
+  padding-right: 2.75rem;
+}
+
+.search-open .search-input:focus {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 .filter-group {
