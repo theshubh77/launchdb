@@ -1050,6 +1050,7 @@ h1, h2, h3, h4, h5, h6 {
 @media (min-width: 768px) {
   .faq-grid {
     grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 1fr;
   }
 }
 
@@ -1164,6 +1165,89 @@ h1, h2, h3, h4, h5, h6 {
 
 .footer-author-link:hover {
   color: var(--text-primary);
+}
+
+/* Author Hover Tooltip Card */
+.footer-author-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.author-tooltip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translate3d(-50%, 8px, 0) scale(0.95);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--border-radius-lg);
+  padding: 1.25rem 1.5rem 1rem 1.5rem;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
+  z-index: 100;
+}
+
+:root[data-theme="light"] .author-tooltip {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-hover);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+}
+
+/* Tooltip Arrow */
+.author-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 11px;
+  height: 11px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-hover);
+  border-top: none;
+  border-left: none;
+  transform: translate3d(-50%, -50%, 0) rotate(45deg);
+}
+
+.footer-author-wrapper:hover .author-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translate3d(-50%, 0, 0) scale(1);
+}
+
+.author-tooltip-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 2px solid var(--border-hover);
+  overflow: hidden;
+  background-color: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.author-tooltip-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.author-tooltip-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  text-align: center;
+  font-family: var(--font-sans);
+  margin-top: 0;
 }
 
 /* Pulsing Heart Animation */

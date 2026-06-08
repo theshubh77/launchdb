@@ -13,7 +13,8 @@ import {
   LinkedinLogo,
   MediumLogo,
   Globe, 
-  BookOpen, 
+  RocketLaunch,
+  ListPlus,
   Database,
   Lightning,
   Sun,
@@ -1270,37 +1271,70 @@ export default function Home() {
           <div className="faq-grid">
             <div className="faq-item">
               <h3 className="faq-question">
-                <BookOpen size={22} /> What is LaunchDB?
+                <RocketLaunch size={22} /> What is LaunchDB?
               </h3>
               <p className="faq-answer">
-                LaunchDB is a professional open-source directory listing platform for SaaS startups. It indexes over {formattedCount} platforms, directory sites, subreddits, and communities where founders can launch their software to get traffic, feedback, and high-quality SEO backlink profiles.
+                LaunchDB is a list of active websites and platforms where you can launch your SaaS. We organize over {formattedCount} web directories, subreddits (Reddit), X (Twitter) communities, Facebook groups, and GitHub repositories in one place. Founders use this list to find early users and grow their audience.
               </p>
             </div>
             
             <div className="faq-item">
               <h3 className="faq-question">
-                <Lightning size={22} /> How does the realtime fetch work?
+                <ListPlus size={22} /> Why should I list my SaaS in directories?
               </h3>
               <p className="faq-answer">
-                LaunchDB connects directly to the repository of launchdb using the GitHub raw API. Every time the website loads, it pulls the most up-to-date JSON data, meaning any updates on the GitHub source code appear on our directory instantly. If the API is offline, it drops back to a built-in JSON fallback snapshot.
+                Listing your SaaS in directories helps you get valuable backlinks that improve your website's search rankings (SEO). It also makes it easier for AI search tools like ChatGPT, Gemini, and Claude to discover your product. This helps you get your first users and gather early feedback.
               </p>
             </div>
 
             <div className="faq-item">
               <h3 className="faq-question">
-                <Database size={22} /> How can I submit my own directory?
+                <Plus size={22} weight="bold" /> How can I submit my own directory?
               </h3>
               <p className="faq-answer">
-                Since our primary data source is the launchdb repository, you can add your directory by making a contribution there. Simply clone the repository, add your directory to the `launchdb.json` data file, and submit a Pull Request. Once merged, it will display on LaunchDB in real-time.
+                You can suggest a new directory using our{" "}
+                <a 
+                  href="?submit" 
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    setIsSubmitModalOpen(true); 
+                    setFormType("submit"); 
+                  }} 
+                  className="modal-link"
+                >
+                  submit directory
+                </a>{" "}
+                form or by contributing directly to our open-source{" "}
+                <a 
+                  href="https://github.com/theshubh77/awesome-saas-directories" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="modal-link"
+                >
+                  GitHub
+                </a>{" "}
+                repository. After you submit the form and pass our security check, we automatically create an issue. Once reviewed, it will go live in real-time.
               </p>
             </div>
 
             <div className="faq-item">
               <h3 className="faq-question">
-                <Globe size={22} /> Why should I list my SaaS in directories?
+                <Bug size={22} /> How can I report a broken link?
               </h3>
               <p className="faq-answer">
-                Listing on niche product directories increases your search presence, helps AI crawlers (like ChatGPT, Gemini, and Claude) index your product in answer engine results (AEO/GEO), drives domain authority via do-follow/no-follow backlinks (SEO), and exposes your tool to early-stage power users.
+                If you find a website that is down or inactive, click on our{" "}
+                <a 
+                  href="?report" 
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    setIsSubmitModalOpen(true); 
+                    setFormType("report"); 
+                  }} 
+                  className="modal-link"
+                >
+                  report a broken link
+                </a>{" "}
+                form. Simply select the directory name from our dropdown list, choose the problem reason, and submit the form. Our team will verify the report and update the directory details accordingly.
               </p>
             </div>
           </div>
@@ -1311,14 +1345,22 @@ export default function Home() {
         <div className="container footer-content">
           <p className="footer-text">
             Built with <span className="pulsing-heart">❤️</span> by{" "}
-            <a 
-              href="https://linktr.ee/theshubh77" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="footer-author-link"
-            >
-              Shubham Bhamare
-            </a>
+            <span className="footer-author-wrapper">
+              <a 
+                href="https://linktr.ee/theshubh77" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="footer-author-link"
+              >
+                Shubham Bhamare
+              </a>
+              <span className="author-tooltip">
+                <span className="author-tooltip-avatar">
+                  <img src="/assets/shubham-bhamare.webp" alt="Shubham Bhamare" />
+                </span>
+                <span className="author-tooltip-name">Shubham Bhamare</span>
+              </span>
+            </span>
           </p>
           <div className="footer-socials">
             <a 
