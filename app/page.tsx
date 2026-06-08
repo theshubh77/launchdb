@@ -76,57 +76,17 @@ const submitDirectorySchema = z.object({
   turnstileToken: z.string().min(1, "Please complete the security check"),
 });
 
-const HINT_DATA = [
-  {
-    name: "Product Hunt",
-    description: "The most popular platform to discover your next favorite tech product.",
-    link: "https://www.producthunt.com/posts/new"
-  },
-  {
-    name: "BetaList",
-    description: "Discover and get early access to tomorrow's startups.",
-    link: "https://betalist.com/submissions/new"
-  },
-  {
-    name: "SaaSHub",
-    description: "The independent software marketplace and alternative finder.",
-    link: "https://www.saashub.com/services/submit"
-  },
-  {
-    name: "AlternativeTo",
-    description: "Crowdsourced software recommendations.",
-    link: "https://alternativeto.net/manage-item/"
-  },
-  {
-    name: "Uneed",
-    description: "A hand-curated directory for the best tools and resources on the internet.",
-    link: "https://www.uneed.best/submit-a-tool"
-  },
-  {
-    name: "Indie Hackers",
-    description: "A community of developers and founders. Includes a database of self-funded products.",
-    link: "https://www.indiehackers.com/products/"
-  },
-  {
-    name: "Peerlist Launchpad",
-    description: "A professional network where you can showcase your work and launch new projects.",
-    link: "https://peerlist.io/launchpad"
-  },
-  {
-    name: "DEV Community",
-    description: "A community of software developers where you can share articles and new tools.",
-    link: "https://dev.to/new"
-  },
-  {
-    name: "Hacker News",
-    description: "A social news website focusing on computer science, entrepreneurship, and product launches.",
-    link: "https://news.ycombinator.com/submit"
-  },
-  {
-    name: "There's An AI For That",
-    description: "A comprehensive directory and database for discovering AI products and tools.",
-    link: "https://theresanaiforthat.com/launch/"
-  }
+const HINT_NAMES = [
+  "Product Hunt",
+  "BetaList",
+  "SaaSHub",
+  "AlternativeTo",
+  "Uneed",
+  "Indie Hackers",
+  "Peerlist Launchpad",
+  "DEV Community",
+  "Hacker News",
+  "There's An AI For That"
 ];
 
 export default function Home() {
@@ -198,6 +158,19 @@ export default function Home() {
     return `${Math.floor(count / 50) * 50}+`;
   }, [allData]);
 
+  // Resolve placeholders/hints from the JSON dataset in real-time by matching name
+  const hintData = useMemo(() => {
+    const dataset = allData.length > 0 ? allData : fallbackData;
+    return HINT_NAMES.map((name) => {
+      const matched = dataset.find((item) => item.name.toLowerCase() === name.toLowerCase());
+      return {
+        name: matched?.name || name,
+        description: matched?.description || "Suggest a new directory tool...",
+        link: matched?.submission_link || "https://example.com"
+      };
+    });
+  }, [allData]);
+
   // Submit Directory Modal State
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [newDirName, setNewDirName] = useState("");
@@ -247,7 +220,7 @@ export default function Home() {
     if (!isSubmitModalOpen) return;
 
     // Pick a random initial index when modal opens
-    const initialIndex = Math.floor(Math.random() * HINT_DATA.length);
+    const initialIndex = Math.floor(Math.random() * HINT_NAMES.length);
     setCurrentHintIndex(initialIndex);
 
     const interval = setInterval(() => {
@@ -259,7 +232,7 @@ export default function Home() {
         setCurrentHintIndex((prev) => {
           let nextIndex = prev;
           while (nextIndex === prev) {
-            nextIndex = Math.floor(Math.random() * HINT_DATA.length);
+            nextIndex = Math.floor(Math.random() * HINT_NAMES.length);
           }
           return nextIndex;
         });
@@ -324,10 +297,10 @@ export default function Home() {
     const nameLower = name.toLowerCase();
     const linkLower = link.toLowerCase();
 
-    if (nameLower.startsWith("r/") || linkLower.includes("reddit.com")) return "reddit";
-    if (nameLower.startsWith("x/") || linkLower.includes("x.com") || linkLower.includes("twitter.com")) return "x";
-    if (nameLower.startsWith("fb/") || linkLower.includes("facebook.com")) return "facebook";
-    if (nameLower.startsWith("gh/") || linkLower.includes("github.com")) return "github";
+    if (nameLower.startsWith("r/") || /(?:^|[^a-z0-9-])reddit\.com(?:\/|\?|#|:|$)/i.test(linkLower)) return "reddit";
+    if (nameLower.startsWith("x/") || /(?:^|[^a-z0-9-])(?:x|twitter)\.com(?:\/|\?|#|:|$)/i.test(linkLower)) return "x";
+    if (nameLower.startsWith("fb/") || /(?:^|[^a-z0-9-])(facebook|fb)\.com(?:\/|\?|#|:|$)/i.test(linkLower)) return "facebook";
+    if (nameLower.startsWith("gh/") || /(?:^|[^a-z0-9-])github\.com(?:\/|\?|#|:|$)/i.test(linkLower)) return "github";
     return "web";
   };
 
@@ -356,10 +329,10 @@ export default function Home() {
     const linkLower = link.trim().toLowerCase();
     if (!linkLower) return "web";
     
-    if (linkLower.includes("reddit.com")) return "reddit";
-    if (linkLower.includes("x.com") || linkLower.includes("twitter.com")) return "x";
-    if (linkLower.includes("facebook.com")) return "facebook";
-    if (linkLower.includes("github.com")) return "github";
+    if (/(?:^|[^a-z0-9-])reddit\.com(?:\/|\?|#|:|$)/i.test(linkLower)) return "reddit";
+    if (/(?:^|[^a-z0-9-])(?:x|twitter)\.com(?:\/|\?|#|:|$)/i.test(linkLower)) return "x";
+    if (/(?:^|[^a-z0-9-])(?:facebook|fb)\.com(?:\/|\?|#|:|$)/i.test(linkLower)) return "facebook";
+    if (/(?:^|[^a-z0-9-])github\.com(?:\/|\?|#|:|$)/i.test(linkLower)) return "github";
     
     return "web";
   };
@@ -369,10 +342,8 @@ export default function Home() {
     const value = e.target.value;
     setNewDirLink(value);
     
-    if (!isPlatformManuallySelected) {
-      const detected = detectPlatformFromLink(value);
-      setNewDirPlatform(detected);
-    }
+    const detected = detectPlatformFromLink(value);
+    setNewDirPlatform(detected);
 
     const trimmed = value.trim();
     if (!trimmed) {
@@ -1137,7 +1108,7 @@ export default function Home() {
                 <input
                   id="dirName"
                   type="text"
-                  placeholder={`e.g. ${HINT_DATA[currentHintIndex].name}`}
+                  placeholder={`e.g. ${hintData[currentHintIndex]?.name || ""}`}
                   value={newDirName}
                   onChange={(e) => {
                     setNewDirName(e.target.value.slice(0, 30));
@@ -1159,7 +1130,7 @@ export default function Home() {
                 </div>
                 <textarea
                   id="dirDesc"
-                  placeholder={`e.g. ${HINT_DATA[currentHintIndex].description}`}
+                  placeholder={`e.g. ${hintData[currentHintIndex]?.description || ""}`}
                   value={newDirDesc}
                   onChange={(e) => {
                     setNewDirDesc(e.target.value.slice(0, 140));
@@ -1178,7 +1149,7 @@ export default function Home() {
                 <input
                   id="dirLink"
                   type="url"
-                  placeholder={`e.g. ${HINT_DATA[currentHintIndex].link}`}
+                  placeholder={`e.g. ${hintData[currentHintIndex]?.link || ""}`}
                   value={newDirLink}
                   onChange={handleLinkChange}
                   className={`form-input ${formErrors.link ? "input-error" : ""} ${isPlaceholderFaded ? "placeholder-fade" : ""}`}
@@ -1194,6 +1165,7 @@ export default function Home() {
                     type="button"
                     onClick={() => handlePlatformSelect("web")}
                     className={`platform-select-chip web ${newDirPlatform === "web" ? "active" : ""}`}
+                    disabled={newDirLink.trim() !== ""}
                   >
                     <Globe size={14} weight="bold" />
                     <span>Web Directory</span>
@@ -1202,6 +1174,7 @@ export default function Home() {
                     type="button"
                     onClick={() => handlePlatformSelect("reddit")}
                     className={`platform-select-chip reddit ${newDirPlatform === "reddit" ? "active" : ""}`}
+                    disabled={newDirLink.trim() !== ""}
                   >
                     <RedditLogo size={14} weight="fill" />
                     <span>Reddit</span>
@@ -1210,6 +1183,7 @@ export default function Home() {
                     type="button"
                     onClick={() => handlePlatformSelect("x")}
                     className={`platform-select-chip x ${newDirPlatform === "x" ? "active" : ""}`}
+                    disabled={newDirLink.trim() !== ""}
                   >
                     <XLogo size={14} weight="bold" />
                     <span>X (Twitter)</span>
@@ -1218,6 +1192,7 @@ export default function Home() {
                     type="button"
                     onClick={() => handlePlatformSelect("facebook")}
                     className={`platform-select-chip facebook ${newDirPlatform === "facebook" ? "active" : ""}`}
+                    disabled={newDirLink.trim() !== ""}
                   >
                     <FacebookLogo size={14} weight="fill" />
                     <span>Facebook</span>
@@ -1226,6 +1201,7 @@ export default function Home() {
                     type="button"
                     onClick={() => handlePlatformSelect("github")}
                     className={`platform-select-chip github ${newDirPlatform === "github" ? "active" : ""}`}
+                    disabled={newDirLink.trim() !== ""}
                   >
                     <GithubLogo size={14} weight="fill" />
                     <span>GitHub</span>

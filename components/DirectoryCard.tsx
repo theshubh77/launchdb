@@ -44,28 +44,28 @@ export default function DirectoryCard({ item, theme }: DirectoryCardProps) {
     const nameLower = name.toLowerCase();
     const linkLower = link.toLowerCase();
 
-    if (nameLower.startsWith("r/") || linkLower.includes("reddit.com")) {
+    if (nameLower.startsWith("r/") || /(?:^|[^a-z0-9-])reddit\.com(?:\/|\?|#|:|$)/i.test(linkLower)) {
       return {
         label: "Reddit",
         class: "reddit",
         icon: <RedditLogo size={16} weight="fill" />
       };
     }
-    if (nameLower.startsWith("x/") || linkLower.includes("x.com") || linkLower.includes("twitter.com")) {
+    if (nameLower.startsWith("x/") || /(?:^|[^a-z0-9-])(?:x|twitter)\.com(?:\/|\?|#|:|$)/i.test(linkLower)) {
       return {
         label: "X (Twitter)",
         class: "x",
         icon: <XLogo size={16} weight="bold" />
       };
     }
-    if (nameLower.startsWith("fb/") || linkLower.includes("facebook.com")) {
+    if (nameLower.startsWith("fb/") || /(?:^|[^a-z0-9-])(?:facebook|fb)\.com(?:\/|\?|#|:|$)/i.test(linkLower)) {
       return {
         label: "Facebook",
         class: "facebook",
         icon: <FacebookLogo size={16} weight="fill" />
       };
     }
-    if (nameLower.startsWith("gh/") || linkLower.includes("github.com")) {
+    if (nameLower.startsWith("gh/") || /(?:^|[^a-z0-9-])github\.com(?:\/|\?|#|:|$)/i.test(linkLower)) {
       return {
         label: "GitHub",
         class: "github",

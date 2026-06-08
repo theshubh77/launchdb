@@ -20,7 +20,7 @@
   {
     "id": 4,
     "name": "AlternativeTo",
-    "description": "Crowdsourced software recommendations.",
+    "description": "A community-driven platform to search and find crowdsourced alternatives to software, apps, and websites.",
     "submission_link": "https://alternativeto.net/manage-item/"
   },
   {
@@ -760,5 +760,35 @@
     "name": "LaunchPad India",
     "description": "A curated launch platform and directory to showcase Indian startups and indie products.",
     "submission_link": "https://launchpadindia.co/submit"
+  },
+  {
+    "id": 128,
+    "name": "AITopTools",
+    "description": "A directory to discover, compare, and submit top AI tools and applications.",
+    "submission_link": "https://aitoptools.com/account/submit-tool/"
+  },
+  {
+    "id": 129,
+    "name": "Builders.to",
+    "description": "A place for founders to share projects, get feedback, and find first users.",
+    "submission_link": "https://builders.to/projects/new"
+  },
+  {
+    "id": 130,
+    "name": "fb/SaaS Founder Group",
+    "description": "A Facebook group for SaaS founders to network, share strategies, and discuss product growth.",
+    "submission_link": "https://www.facebook.com/groups/saasfoundergroup/"
+  },
+  {
+    "id": 131,
+    "name": "fb/SaaS Marketing Group",
+    "description": "A Facebook group for SaaS founders and marketers to discuss marketing strategies, growth hacks, and user acquisition.",
+    "submission_link": "https://www.facebook.com/groups/4098505490210812"
+  },
+  {
+    "id": 132,
+    "name": "Super Launch",
+    "description": "A startup discovery and product launch platform for SaaS products, AI tools, and open-source projects.",
+    "submission_link": "https://www.superlaun.ch/dashboard/submit"
   }
 ]
