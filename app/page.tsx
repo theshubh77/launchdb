@@ -30,6 +30,7 @@ import DirectoryCard from "../components/DirectoryCard";
 import StarBorder from "../components/StarBorder";
 import ClickSpark from "../components/ClickSpark";
 import fallbackData from "../public/launchdb-fallback.json";
+import { addUtmToUrl } from "./utils/url";
 
 interface DirectoryItem {
   id: number;
@@ -37,6 +38,11 @@ interface DirectoryItem {
   description: string;
   submission_link: string;
 }
+
+const processedFallbackData: DirectoryItem[] = (fallbackData as DirectoryItem[]).map((item) => ({
+  ...item,
+  submission_link: addUtmToUrl(item.submission_link),
+}));
 
 // URL regex with negative lookahead to prevent matching www as domain without secondary dot
 const urlRegex = /^https?:\/\/(?:www\.)?(?!www\.)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/i;
@@ -192,14 +198,14 @@ export default function Home() {
 
   // Dynamic count formatting
   const formattedCount = useMemo(() => {
-    const count = allData.length > 0 ? allData.length : fallbackData.length;
+    const count = allData.length > 0 ? allData.length : processedFallbackData.length;
     if (count < 50) return `${count}`;
     return `${Math.floor(count / 50) * 50}+`;
   }, [allData]);
 
   // Resolve placeholders/hints from the JSON dataset in real-time by matching name
   const hintData = useMemo(() => {
-    const dataset = allData.length > 0 ? allData : fallbackData;
+    const dataset = allData.length > 0 ? allData : processedFallbackData;
     return HINT_NAMES.map((name) => {
       const matched = dataset.find((item) => item.name.toLowerCase() === name.toLowerCase());
       return {
@@ -254,7 +260,7 @@ export default function Home() {
 
   // Sorted list of directory names for report broken link dropdown
   const sortedDirectories = useMemo(() => {
-    const dataset = allData.length > 0 ? allData : fallbackData;
+    const dataset = allData.length > 0 ? allData : processedFallbackData;
     return [...dataset].sort((a, b) => {
       const cleanA = a.name.replace(/^(r\/|fb\/|gh\/|x\/)/i, "").toLowerCase();
       const cleanB = b.name.replace(/^(r\/|fb\/|gh\/|x\/)/i, "").toLowerCase();
@@ -351,7 +357,11 @@ export default function Home() {
         if (!res.ok) throw new Error("Failed to fetch live repo data");
         const json = await res.json();
         if (active) {
-          setAllData(json);
+          const processed = json.map((item: DirectoryItem) => ({
+            ...item,
+            submission_link: addUtmToUrl(item.submission_link)
+          }));
+          setAllData(processed);
           setFetchError(false);
         }
       } catch (err) {
@@ -362,7 +372,11 @@ export default function Home() {
           if (!resFallback.ok) throw new Error("Fallback file fetch failed");
           const jsonFallback = await resFallback.json();
           if (active) {
-            setAllData(jsonFallback);
+            const processed = jsonFallback.map((item: DirectoryItem) => ({
+              ...item,
+              submission_link: addUtmToUrl(item.submission_link)
+            }));
+            setAllData(processed);
             setFetchError(true);
           }
         } catch (fallbackErr) {
@@ -1049,7 +1063,7 @@ export default function Home() {
             </a>
             <div className="nav-actions">
               <a
-                href="https://github.com/theshubh77/awesome-saas-directories"
+                href={addUtmToUrl("https://github.com/theshubh77/awesome-saas-directories")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="nav-github-link"
@@ -1074,7 +1088,7 @@ export default function Home() {
                 )}
               </button>
               <a 
-                href="https://buymeacoffee.com/theshubh77"
+                href={addUtmToUrl("https://buymeacoffee.com/theshubh77")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bmc-link"
@@ -1306,7 +1320,7 @@ export default function Home() {
                 </a>{" "}
                 form or by contributing directly to our open-source{" "}
                 <a 
-                  href="https://github.com/theshubh77/awesome-saas-directories" 
+                  href={addUtmToUrl("https://github.com/theshubh77/awesome-saas-directories")} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="modal-link"
@@ -1347,7 +1361,7 @@ export default function Home() {
             Built with <span className="pulsing-heart">❤️</span> by{" "}
             <span className="footer-author-wrapper">
               <a 
-                href="https://linktr.ee/theshubh77" 
+                href={addUtmToUrl("https://linktr.ee/theshubh77")} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="footer-author-link"
@@ -1364,7 +1378,7 @@ export default function Home() {
           </p>
           <div className="footer-socials">
             <a 
-              href="https://facebook.com/theshubh77" 
+              href={addUtmToUrl("https://facebook.com/theshubh77")} 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="Facebook" 
@@ -1373,7 +1387,7 @@ export default function Home() {
               <FacebookLogo size={24} />
             </a>
             <a 
-              href="https://instagram.com/theshubh77" 
+              href={addUtmToUrl("https://instagram.com/theshubh77")} 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="Instagram" 
@@ -1382,7 +1396,7 @@ export default function Home() {
               <InstagramLogo size={24} />
             </a>
             <a 
-              href="https://linkedin.com/in/theshubh77" 
+              href={addUtmToUrl("https://linkedin.com/in/theshubh77")} 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="LinkedIn" 
@@ -1391,7 +1405,7 @@ export default function Home() {
               <LinkedinLogo size={24} />
             </a>
             <a 
-              href="https://github.com/theshubh77" 
+              href={addUtmToUrl("https://github.com/theshubh77")} 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="GitHub" 
@@ -1400,7 +1414,7 @@ export default function Home() {
               <GithubLogo size={24} />
             </a>
             <a 
-              href="https://x.com/theshubh77" 
+              href={addUtmToUrl("https://x.com/theshubh77")} 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="X" 
@@ -1409,7 +1423,7 @@ export default function Home() {
               <XLogo size={24} />
             </a>
             <a 
-              href="https://medium.com/@theshubh77" 
+              href={addUtmToUrl("https://medium.com/@theshubh77")} 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="Medium" 
@@ -1466,7 +1480,7 @@ export default function Home() {
                   <p className="modal-description">
                     If you want to add a new directory, please submit it below. Before submitting, please check the{" "}
                     <a 
-                      href="https://github.com/theshubh77/awesome-saas-directories/blob/master/CONTRIBUTING.md"
+                      href={addUtmToUrl("https://github.com/theshubh77/awesome-saas-directories/blob/master/CONTRIBUTING.md")}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="modal-link"
