@@ -5,7 +5,6 @@ import Script from "next/script";
 import { z } from "zod";
 import { 
   MagnifyingGlass, 
-  ArrowClockwise, 
   GithubLogo, 
   RedditLogo, 
   XLogo, 
@@ -1216,7 +1215,7 @@ export default function Home() {
           </div>
           {loading && (
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <ArrowClockwise size={18} className="animate-spin" />
+              <Spinner size={18} className="animate-spin" />
               Loading...
             </div>
           )}
@@ -1260,7 +1259,7 @@ export default function Home() {
         {/* Trigger element for IntersectionObserver lazy load */}
         {!loading && filteredData.length > visibleCount && (
           <div ref={loadMoreRef} className="load-more-trigger">
-            <ArrowClockwise size={20} className="animate-spin" style={{ marginRight: "0.5rem" }} />
+            <Spinner size={20} className="animate-spin" style={{ marginRight: "0.5rem" }} />
             Loading more directories...
           </div>
         )}
@@ -1425,7 +1424,7 @@ export default function Home() {
                   <p className="modal-description">
                     If you want to add a new directory, please submit it below. Before submitting, please check the{" "}
                     <a 
-                      href="https://github.com/theshubh77/awesome-saas-directories/blob/main/CONTRIBUTING.md"
+                      href="https://github.com/theshubh77/awesome-saas-directories/blob/master/CONTRIBUTING.md"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="modal-link"
@@ -1741,7 +1740,7 @@ export default function Home() {
               <button type="submit" className="modal-submit-btn" disabled={isSubmitting || !turnstileToken}>
                 {isSubmitting ? (
                   <>
-                    <ArrowClockwise size={16} className="animate-spin" style={{ marginRight: "0.5rem" }} />
+                    <Spinner size={16} className="animate-spin" style={{ marginRight: "0.5rem" }} />
                     <span>{formType === "submit" ? "Submitting..." : "Reporting..."}</span>
                   </>
                 ) : (

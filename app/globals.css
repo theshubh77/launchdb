@@ -1873,7 +1873,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Spinner Rotate Animation */
 .animate-spin {
-  animation: spin 1s linear infinite;
+  animation: spin 1.2s linear infinite;
 }
 
 @keyframes spin {
