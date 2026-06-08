@@ -291,8 +291,10 @@ export default function Home() {
       setTheme(savedTheme);
       document.documentElement.setAttribute("data-theme", savedTheme);
     } else {
-      const currentTheme = document.documentElement.getAttribute("data-theme") as "light" | "dark" || "dark";
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const currentTheme = document.documentElement.getAttribute("data-theme") as "light" | "dark" || systemTheme;
       setTheme(currentTheme);
+      document.documentElement.setAttribute("data-theme", currentTheme);
     }
 
     // Check search params for ?submit or ?report flag
