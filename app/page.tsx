@@ -150,19 +150,57 @@ export default function Home() {
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
 
-  // Back to Top visibility controller
+  // Scroll handler for back to top button & hero blur animations
   useEffect(() => {
     let active = true;
+    let ticking = false;
+    
     const handleScroll = () => {
       if (!active) return;
+      
+      // Update back to top button state
       if (window.scrollY > 300) {
         setShowBackToTop(true);
       } else {
         setShowBackToTop(false);
       }
+
+      // Optimize scroll animation using requestAnimationFrame
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (heroRef.current) {
+            const scrollY = window.scrollY;
+            const threshold = 50; // Threshold before starting the blur/fade effect
+            
+            if (scrollY < threshold) {
+              heroRef.current.style.filter = "none";
+              heroRef.current.style.opacity = "1";
+              heroRef.current.style.transform = "none";
+            } else if (scrollY < 400) {
+              const activeScroll = scrollY - threshold;
+              const blurValue = Math.min(activeScroll / 20, 12);
+              const opacityValue = Math.max(1 - activeScroll / 250, 0);
+              const translateY = activeScroll * 0.2;
+              heroRef.current.style.filter = blurValue > 0 ? `blur(${blurValue.toFixed(1)}px)` : "none";
+              heroRef.current.style.opacity = opacityValue.toString();
+              heroRef.current.style.transform = `translateY(${translateY.toFixed(1)}px)`;
+            } else {
+              heroRef.current.style.filter = "blur(12px)";
+              heroRef.current.style.opacity = "0";
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
+    
     window.addEventListener("scroll", handleScroll, { passive: true });
+    // Initialize immediately in case page is loaded scrolled down
+    handleScroll();
+    
     return () => {
       active = false;
       window.removeEventListener("scroll", handleScroll);
@@ -1145,7 +1183,7 @@ export default function Home() {
           </div>
         </nav>
 
-        <header className="hero-section">
+        <header ref={heroRef} className="hero-section">
           <div className="container">
             <StarBorder
               as="div"

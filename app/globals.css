@@ -157,6 +157,7 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
   padding: 4.5rem 0 3rem 0;
   position: relative;
+  will-change: transform, filter, opacity;
 }
 
 .hero-tag-wrapper {
