@@ -93,6 +93,7 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -555,6 +556,9 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-sans);
   font-size: 0.95rem;
   transition: all var(--transition-fast);
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .search-input:focus {
@@ -1583,7 +1587,7 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1000;
+  z-index: 100000;
   background-color: rgba(8, 10, 13, 0.7);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -1658,24 +1662,30 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .modal-close-btn {
-  background: transparent;
-  border: none;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
   color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  border: 1px solid transparent;
   transition: all var(--transition-fast);
 }
 
 .modal-close-btn:hover {
   color: var(--text-primary);
-  background-color: var(--bg-tertiary);
-  border-color: var(--border-color);
+  background-color: var(--border-color);
+  border-color: var(--border-hover);
+}
+
+.modal-close-btn:disabled,
+.form-switch-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* Form Styles */
@@ -2317,4 +2327,109 @@ select.form-input option {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Modal Success State Styles */
+.modal-success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2.5rem 1rem 1.5rem 1rem;
+}
+
+.success-icon-wrapper {
+  color: var(--accent-primary);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: success-scale-up 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes success-scale-up {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.success-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+  font-family: var(--font-outfit);
+}
+
+.success-message {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 380px;
+  margin: 0 auto 0.5rem auto;
+}
+
+.success-issue-link {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.success-issue-link a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color var(--transition-fast);
+}
+
+.success-issue-link a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.success-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.success-link {
+  background: none;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--accent-primary);
+  cursor: pointer;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.success-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.success-or {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.success-divider {
+  width: 60px;
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 1.25rem auto;
 }

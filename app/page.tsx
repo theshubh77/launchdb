@@ -24,7 +24,8 @@ import {
   CaretUp,
   CaretDown,
   Spinner,
-  Bug
+  Bug,
+  CheckCircle
 } from "@phosphor-icons/react";
 import DirectoryCard from "../components/DirectoryCard";
 import StarBorder from "../components/StarBorder";
@@ -249,7 +250,12 @@ export default function Home() {
   const [isTurnstileLoading, setIsTurnstileLoading] = useState(true);
   const turnstileContainerRef = useRef<HTMLDivElement>(null);
   const turnstileWidgetIdRef = useRef<string | null>(null);
-  const [submitStatus, setSubmitStatus] = useState<{ success: boolean | null; message: string }>({
+  const [submitStatus, setSubmitStatus] = useState<{
+    success: boolean | null;
+    message: string;
+    issueUrl?: string;
+    issueNumber?: number;
+  }>({
     success: null,
     message: "",
   });
@@ -593,9 +599,7 @@ export default function Home() {
     let userValidationError: string | null = null;
 
     try {
-      const isDev = process.env.NODE_ENV === "development";
-      const apiUrl = isDev ? "http://localhost:3001" : "";
-      const res = await fetch(`${apiUrl}/api/report-broken-link`, {
+      const res = await fetch("/api/report-broken-link", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -616,7 +620,7 @@ export default function Home() {
         // Fallback for non-JSON responses
       }
 
-      if (!res.ok) {
+      if (!res.ok || !data.issueNumber || !data.issueUrl) {
         if (res.status === 400 && data.error) {
           userValidationError = data.error;
         }
@@ -625,7 +629,9 @@ export default function Home() {
 
       setSubmitStatus({
         success: true,
-        message: `Successfully reported! Created issue #${data.issueNumber}.`,
+        message: "Your report has been submitted successfully!",
+        issueUrl: data.issueUrl,
+        issueNumber: data.issueNumber,
       });
 
       // Clear inputs
@@ -634,11 +640,6 @@ export default function Home() {
       setReportOtherText("");
       setReportNewLink("");
       setFormErrors({});
-
-      // Auto close modal after brief delay
-      setTimeout(() => {
-        handleCloseModal();
-      }, 2500);
 
     } catch (err: any) {
       console.error("Report error:", err);
@@ -650,6 +651,13 @@ export default function Home() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Reset form status to submit/report another
+  const handleResetForm = () => {
+    setSubmitStatus({ success: null, message: "" });
+    setTurnstileToken(null);
+    setIsTurnstileLoading(true);
   };
 
   // Handle modal close
@@ -689,6 +697,22 @@ export default function Home() {
       }
     }
   };
+
+  // Prevent page unload/refresh during active submission
+  useEffect(() => {
+    if (!isSubmitting) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isSubmitting]);
 
   // Scroll lock when modal is open
   useEffect(() => {
@@ -804,25 +828,30 @@ export default function Home() {
             if (observer) observer.disconnect();
           }, 5000);
 
-          const widgetId = turnstile.render(turnstileContainerRef.current, {
-            sitekey: "0x4AAAAAADfY5f5eyqmjXZrK",
-            theme: theme === "dark" ? "dark" : "light",
-            callback: (token: string) => {
-              setTurnstileToken(token);
-              setFormErrors((prev) => ({ ...prev, turnstile: undefined }));
-              setIsTurnstileLoading(false);
-              clearTimeout(timeoutId);
-            },
-            "expired-callback": () => {
-              setTurnstileToken(null);
-            },
-            "error-callback": () => {
-              setTurnstileToken(null);
-              setIsTurnstileLoading(false);
-              clearTimeout(timeoutId);
-            }
-          });
-          turnstileWidgetIdRef.current = widgetId;
+          try {
+            const widgetId = turnstile.render(turnstileContainerRef.current, {
+              sitekey: "0x4AAAAAADfY5f5eyqmjXZrK",
+              theme: theme === "dark" ? "dark" : "light",
+              callback: (token: string) => {
+                setTurnstileToken(token);
+                setFormErrors((prev) => ({ ...prev, turnstile: undefined }));
+                setIsTurnstileLoading(false);
+                clearTimeout(timeoutId);
+              },
+              "expired-callback": () => {
+                setTurnstileToken(null);
+              },
+              "error-callback": () => {
+                setTurnstileToken(null);
+                setIsTurnstileLoading(false);
+                clearTimeout(timeoutId);
+              }
+            });
+            turnstileWidgetIdRef.current = widgetId;
+          } catch (e) {
+            console.error("Failed to render Turnstile widget:", e);
+            setIsTurnstileLoading(false);
+          }
         }
       };
 
@@ -883,7 +912,7 @@ export default function Home() {
         turnstileWidgetIdRef.current = null;
       }
     };
-  }, [isSubmitModalOpen, theme, formType]);
+  }, [isSubmitModalOpen, theme, formType, submitStatus.success]);
 
   // Form submit handler
   const handleSubmitDirectory = async (e: React.FormEvent) => {
@@ -917,9 +946,7 @@ export default function Home() {
     let userValidationError: string | null = null;
 
     try {
-      const isDev = process.env.NODE_ENV === "development";
-      const apiUrl = isDev ? "http://localhost:3001" : "";
-      const res = await fetch(`${apiUrl}/api/submit-directory`, {
+      const res = await fetch("/api/submit-directory", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -940,7 +967,7 @@ export default function Home() {
         // Fallback for non-JSON responses
       }
 
-      if (!res.ok) {
+      if (!res.ok || !data.issueNumber || !data.issueUrl) {
         if (res.status === 400 && data.error) {
           userValidationError = data.error;
         }
@@ -949,7 +976,9 @@ export default function Home() {
 
       setSubmitStatus({
         success: true,
-        message: `Successfully submitted! Created issue #${data.issueNumber}.`,
+        message: "Your submission has been created successfully!",
+        issueUrl: data.issueUrl,
+        issueNumber: data.issueNumber,
       });
 
       // Clear inputs
@@ -959,11 +988,6 @@ export default function Home() {
       setNewDirPlatform("web");
       setIsPlatformManuallySelected(false);
       setFormErrors({});
-
-      // Auto close modal after brief delay
-      setTimeout(() => {
-        handleCloseModal();
-      }, 2500);
 
     } catch (err: any) {
       console.error("Submission error:", err);
@@ -1442,8 +1466,12 @@ export default function Home() {
 
       {/* Submit Directory Popup Modal */}
       {isSubmitModalOpen && (
-        <div className="modal-overlay">
-          <div ref={modalContentRef} className="modal-content">
+        <div className="modal-overlay" onClick={() => { if (!isSubmitting) handleCloseModal(); }}>
+          <div 
+            ref={modalContentRef}
+            className="modal-content" 
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <h2 className="modal-title">
                 {formType === "submit" ? (
@@ -1463,17 +1491,86 @@ export default function Home() {
                 className="modal-close-btn" 
                 onClick={handleCloseModal} 
                 aria-label="Close form"
+                disabled={isSubmitting}
               >
                 <X size={20} />
               </button>
             </div>
             
-            <form 
-              key={formType}
-              onSubmit={formType === "submit" ? handleSubmitDirectory : handleReportBrokenLink} 
-              className="modal-form form-fade-in" 
-              noValidate
-            >
+            {submitStatus.success ? (
+              <div className="modal-success-state form-fade-in">
+                <div className="success-icon-wrapper">
+                  <CheckCircle size={56} weight="fill" className="success-icon" />
+                </div>
+                <h3 className="success-title">
+                  {formType === "submit" ? "Submission Received!" : "Report Received!"}
+                </h3>
+                <p className="success-message">
+                  {submitStatus.message}
+                </p>
+                {submitStatus.issueUrl && submitStatus.issueNumber && (
+                  <p className="success-issue-link">
+                    Track progress on GitHub:{" "}
+                    <a 
+                      href={addUtmToUrl(submitStatus.issueUrl)} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="issue-link"
+                    >
+                      Issue #{submitStatus.issueNumber}
+                    </a>
+                  </p>
+                )}
+                
+                <div className="success-divider" />
+
+                <div className="success-actions">
+                  {formType === "submit" ? (
+                    <>
+                      <button 
+                        type="button" 
+                        onClick={handleResetForm} 
+                        className="success-link"
+                      >
+                        Submit Another Directory
+                      </button>
+                      <span className="success-or">OR</span>
+                      <button 
+                        type="button" 
+                        onClick={() => handleSwitchFormType("report")} 
+                        className="success-link"
+                      >
+                        Report a Broken Link
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button 
+                        type="button" 
+                        onClick={handleResetForm} 
+                        className="success-link"
+                      >
+                        Report Another Broken Link
+                      </button>
+                      <span className="success-or">OR</span>
+                      <button 
+                        type="button" 
+                        onClick={() => handleSwitchFormType("submit")} 
+                        className="success-link"
+                      >
+                        Submit a Directory
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <form 
+                key={formType}
+                onSubmit={formType === "submit" ? handleSubmitDirectory : handleReportBrokenLink} 
+                className="modal-form form-fade-in" 
+                noValidate
+              >
               {submitStatus.message && (
                 <div className={`status-banner ${submitStatus.success ? "success" : "error"}`}>
                   <span>{submitStatus.success ? "✓" : "⚠"} {submitStatus.message}</span>
@@ -1828,6 +1925,7 @@ export default function Home() {
                     type="button" 
                     className="form-switch-btn" 
                     onClick={() => handleSwitchFormType("report")}
+                    disabled={isSubmitting}
                   >
                     <Bug size={16} weight="bold" />
                     <span>Report a Broken Link</span>
@@ -1837,6 +1935,7 @@ export default function Home() {
                     type="button" 
                     className="form-switch-btn" 
                     onClick={() => handleSwitchFormType("submit")}
+                    disabled={isSubmitting}
                   >
                     <Plus size={16} weight="bold" />
                     <span>Submit a Directory</span>
@@ -1844,6 +1943,7 @@ export default function Home() {
                 )}
               </div>
             </form>
+          )}
           </div>
         </div>
       )}

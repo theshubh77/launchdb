@@ -101,15 +101,25 @@ module.exports = async function handler(request, response) {
   // Format reason label
   let reasonLabel = "";
   if (reason === "down_404") {
-    reasonLabel = "Website is down / returns a 404";
+    reasonLabel = "The website is down / returns a 404";
   } else if (reason === "submit_changed") {
-    reasonLabel = "Submit link has changed";
+    reasonLabel = "The submit link has changed";
   } else {
-    reasonLabel = `Other: ${otherDescription}`;
+    reasonLabel = `Other (${otherDescription})`;
   }
 
-  const title = `[Broken Link Report]: ${directoryName}`;
-  const body = `**Directory Name:**\n${directoryName}\n\n**Reason:**\n${reasonLabel}\n\n**New Submit Link:**\n${newSubmitLink || "Not provided"}`;
+  const title = `[Broken Link | via LaunchDB]: ${directoryName}`;
+  const body = `> [!NOTE]
+> This issue was automatically created via the [LaunchDB](https://launchdb.vercel.app) report broken link form and was not created directly by @theshubh77.
+
+### Which directory has a broken link?
+${directoryName}
+
+### What is wrong with the link?
+${reasonLabel}
+
+### New Submit Link
+${newSubmitLink || "Not provided"}`;
 
   try {
     const apiResponse = await fetch(

@@ -114,8 +114,30 @@ module.exports = async function handler(request, response) {
     formattedName = `gh/${formattedName}`;
   }
 
-  const title = `[Directory]: ${formattedName}`;
-  const body = `**Directory Name:**\n${formattedName}\n\n**Description:**\n${validatedDesc}\n\n**Submit Link:**\n${validatedLink}`;
+  const platformLabels = {
+    web: 'Web Directory',
+    reddit: 'Reddit',
+    x: 'X (Twitter)',
+    facebook: 'Facebook',
+    github: 'GitHub'
+  };
+  const fullPlatformName = platformLabels[validatedPlatform] || validatedPlatform;
+
+  const title = `[New Directory | via LaunchDB]: ${formattedName}`;
+  const body = `> [!NOTE]
+> This issue was automatically created via the [LaunchDB](https://launchdb.vercel.app) submit directory form and was not created directly by @theshubh77.
+
+### Directory Name
+${formattedName}
+
+### Description
+${validatedDesc}
+
+### Submission Link
+${validatedLink}
+
+### Platform Category
+${fullPlatformName}`;
 
   try {
     const apiResponse = await fetch(
