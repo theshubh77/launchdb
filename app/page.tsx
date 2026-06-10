@@ -15,7 +15,7 @@ import {
   Globe, 
   RocketLaunch,
   ListPlus,
-  Database,
+  SmileyXEyes,
   Lightning,
   Sun,
   Moon,
@@ -25,7 +25,8 @@ import {
   CaretDown,
   Spinner,
   Bug,
-  CheckCircle
+  CheckCircle,
+  Sparkle
 } from "@phosphor-icons/react";
 import DirectoryCard from "../components/DirectoryCard";
 import StarBorder from "../components/StarBorder";
@@ -1162,11 +1163,18 @@ export default function Home() {
                 title="Buy Me a Coffee"
               >
                 {mounted ? (
-                  <img 
-                    src={theme === "dark" ? "/assets/bmc-logo-dark.svg" : "/assets/bmc-logo-light.svg"} 
-                    alt="Buy Me a Coffee" 
-                    className="bmc-logo"
-                  />
+                  <>
+                    <img 
+                      src="/assets/bmc-logo-dark.svg" 
+                      alt="Buy Me a Coffee" 
+                      className="bmc-logo bmc-logo-dark"
+                    />
+                    <img 
+                      src="/assets/bmc-logo-light.svg" 
+                      alt="Buy Me a Coffee" 
+                      className="bmc-logo bmc-logo-light"
+                    />
+                  </>
                 ) : (
                   <div className="bmc-logo-placeholder" />
                 )}
@@ -1330,7 +1338,7 @@ export default function Home() {
           </section>
         ) : (
           <div className="empty-state">
-            <Database size={48} className="empty-icon" />
+            <SmileyXEyes size={48} className="empty-icon" />
             <h3 className="empty-title">No directories found</h3>
             <p className="empty-desc">
               We couldn't find anything matching "{search}". Try adjusting your filters or search keywords.
@@ -1661,19 +1669,31 @@ export default function Home() {
                         {newDirDesc.length}/140
                       </span>
                     </div>
-                    <textarea
-                      id="dirDesc"
-                      placeholder={`e.g. ${hintData[currentHintIndex]?.description || ""}`}
-                      value={newDirDesc}
-                      onChange={(e) => {
-                        setNewDirDesc(e.target.value.slice(0, 140));
-                        if (formErrors.description) setFormErrors(prev => ({ ...prev, description: undefined }));
-                      }}
-                      className={`form-textarea ${formErrors.description ? "input-error" : ""} ${isPlaceholderFaded ? "placeholder-fade" : ""}`}
-                      maxLength={140}
-                      rows={3}
-                      required
-                    />
+                    <div className="form-textarea-wrapper">
+                      <textarea
+                        id="dirDesc"
+                        placeholder={`e.g. ${hintData[currentHintIndex]?.description || ""}`}
+                        value={newDirDesc}
+                        onChange={(e) => {
+                          setNewDirDesc(e.target.value.slice(0, 140));
+                          if (formErrors.description) setFormErrors(prev => ({ ...prev, description: undefined }));
+                        }}
+                        className={`form-textarea ${formErrors.description ? "input-error" : ""} ${isPlaceholderFaded ? "placeholder-fade" : ""}`}
+                        maxLength={140}
+                        rows={3}
+                        required
+                      />
+                      <a
+                        href="https://chatgpt.com/g/g-6a29a058bee48191992f916ff68cb066-launchdb-description-generator"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="description-ai-btn"
+                        title="Generate with AI"
+                        aria-label="Generate with AI"
+                      >
+                        <Sparkle size={16} weight="fill" />
+                      </a>
+                    </div>
                     {formErrors.description && <span className="error-message">{formErrors.description}</span>}
                   </div>
 

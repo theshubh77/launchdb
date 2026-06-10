@@ -1511,8 +1511,16 @@ h1, h2, h3, h4, h5, h6 {
 .bmc-logo {
   width: 34px;
   height: 34px;
-  display: block;
+  display: none;
   transition: transform var(--transition-fast);
+}
+
+:root[data-theme="dark"] .bmc-logo-dark {
+  display: block;
+}
+
+:root[data-theme="light"] .bmc-logo-light {
+  display: block;
 }
 
 .bmc-logo-placeholder {
@@ -1739,9 +1747,56 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .form-textarea {
+  display: block;
+  width: 100%;
   resize: vertical;
   min-height: 84px;
   line-height: 1.5;
+  padding-right: 2.5rem;
+}
+
+.form-textarea-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.description-ai-btn {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+}
+
+:root[data-theme="light"] .description-ai-btn {
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05);
+}
+
+.description-ai-btn:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  background-color: var(--accent-soft);
+  transform: scale(1.08);
+  box-shadow: 0 4px 8px var(--accent-soft);
+}
+
+.description-ai-btn:active {
+  transform: scale(0.95);
+}
+
+.description-ai-btn svg {
+  display: block;
 }
 
 .form-input:focus, 
