@@ -1092,11 +1092,11 @@ export default function Home() {
             </a>
             <div className="nav-actions">
               <a
-                href={addUtmToUrl("https://github.com/theshubh77/awesome-saas-directories")}
+                href="https://github.com/theshubh77/launchdb"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="nav-github-link"
-                title="GitHub Source"
+                title="GitHub"
               >
                 <GithubLogo size={34} weight="light" />
               </a>
@@ -1117,7 +1117,7 @@ export default function Home() {
                 )}
               </button>
               <a 
-                href={addUtmToUrl("https://buymeacoffee.com/theshubh77")}
+                href="https://buymeacoffee.com/theshubh77"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bmc-link"
@@ -1349,7 +1349,7 @@ export default function Home() {
                 </a>{" "}
                 form or by contributing directly to our open-source{" "}
                 <a 
-                  href={addUtmToUrl("https://github.com/theshubh77/awesome-saas-directories")} 
+                  href="https://github.com/theshubh77/awesome-saas-directories" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="modal-link"
@@ -1390,7 +1390,7 @@ export default function Home() {
             Built with <span className="pulsing-heart">❤️</span> by{" "}
             <span className="footer-author-wrapper">
               <a 
-                href={addUtmToUrl("https://linktr.ee/theshubh77")} 
+                href="https://linktr.ee/theshubh77" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="footer-author-link"
@@ -1407,7 +1407,7 @@ export default function Home() {
           </p>
           <div className="footer-socials">
             <a 
-              href={addUtmToUrl("https://facebook.com/theshubh77")} 
+              href="https://facebook.com/theshubh77" 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="Facebook" 
@@ -1416,7 +1416,7 @@ export default function Home() {
               <FacebookLogo size={24} />
             </a>
             <a 
-              href={addUtmToUrl("https://instagram.com/theshubh77")} 
+              href="https://instagram.com/theshubh77" 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="Instagram" 
@@ -1425,7 +1425,7 @@ export default function Home() {
               <InstagramLogo size={24} />
             </a>
             <a 
-              href={addUtmToUrl("https://linkedin.com/in/theshubh77")} 
+              href="https://linkedin.com/in/theshubh77" 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="LinkedIn" 
@@ -1434,7 +1434,7 @@ export default function Home() {
               <LinkedinLogo size={24} />
             </a>
             <a 
-              href={addUtmToUrl("https://github.com/theshubh77")} 
+              href="https://github.com/theshubh77" 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="GitHub" 
@@ -1443,7 +1443,7 @@ export default function Home() {
               <GithubLogo size={24} />
             </a>
             <a 
-              href={addUtmToUrl("https://x.com/theshubh77")} 
+              href="https://x.com/theshubh77" 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="X" 
@@ -1452,7 +1452,7 @@ export default function Home() {
               <XLogo size={24} />
             </a>
             <a 
-              href={addUtmToUrl("https://medium.com/@theshubh77")} 
+              href="https://medium.com/@theshubh77" 
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="Medium" 
@@ -1466,7 +1466,7 @@ export default function Home() {
 
       {/* Submit Directory Popup Modal */}
       {isSubmitModalOpen && (
-        <div className="modal-overlay" onClick={() => { if (!isSubmitting) handleCloseModal(); }}>
+        <div className="modal-overlay">
           <div 
             ref={modalContentRef}
             className="modal-content" 
@@ -1490,7 +1490,8 @@ export default function Home() {
                 type="button" 
                 className="modal-close-btn" 
                 onClick={handleCloseModal} 
-                aria-label="Close form"
+                aria-label="Close"
+                title="Close"
                 disabled={isSubmitting}
               >
                 <X size={20} />
@@ -1512,7 +1513,7 @@ export default function Home() {
                   <p className="success-issue-link">
                     Track progress on GitHub:{" "}
                     <a 
-                      href={addUtmToUrl(submitStatus.issueUrl)} 
+                      href={submitStatus.issueUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="issue-link"
@@ -1582,7 +1583,7 @@ export default function Home() {
                   <p className="modal-description">
                     If you want to add a new directory, please submit it below. Before submitting, please check the{" "}
                     <a 
-                      href={addUtmToUrl("https://github.com/theshubh77/awesome-saas-directories/blob/master/CONTRIBUTING.md")}
+                      href="https://github.com/theshubh77/awesome-saas-directories/blob/master/CONTRIBUTING.md"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="modal-link"
