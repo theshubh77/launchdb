@@ -3,7 +3,7 @@
 [![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-000000?style=flat&logo=vercel&logoColor=white)](https://launchdb.vercel.app/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](LICENSE)
 
-LaunchDB is an open-source directory platform designed for founders and indie hackers to submit their SaaS to 100+ web directories, subreddits, X communities, Facebook groups, and GitHub repositories to find early adopters and build high-quality SEO backlinks.
+LaunchDB is an open-source directory platform designed for developers, founders, and indie hackers to submit their SaaS to 100+ web directories, subreddits, X communities, Facebook groups, and GitHub repositories to find early adopters and build high-quality SEO backlinks.
 
 ### 💡 Why LaunchDB?
 
@@ -31,12 +31,12 @@ We welcome and appreciate all contributions!
 
 ## 👨‍💻 Author
 
-Developed and maintained by **[Shubham Bhamare (@theshubh77)](https://github.com/theshubh77)**.
+Developed and maintained by **[Shubham Bhamare](https://linktr.ee/theshubh77)**.
 
-If you find this project useful, please consider giving it a star! 🌟
+If you found this project helpful in launching your SaaS, consider giving the repository a ⭐!
 
 ---
 
-## 📄 License
+## 📜 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/theshubh77/launchdb/blob/main/LICENSE) file for details.
