@@ -31,7 +31,7 @@ We welcome and appreciate all contributions!
 
 ## 👨‍💻 Author
 
-Developed and maintained by **[Shubham Bhamare](https://github.com/theshubh77)**.
+Developed and maintained by **[Shubham Bhamare](https://linktr.ee/theshubh77)**.
 
 If you found this project helpful in launching your SaaS, consider giving the repository a ⭐!
 
@@ -39,4 +39,4 @@ If you found this project helpful in launching your SaaS, consider giving the re
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/theshubh77/launchdb/tree/main?tab=MIT-1-ov-file) file for details.
