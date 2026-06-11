@@ -31,12 +31,12 @@ We welcome and appreciate all contributions!
 
 ## 👨‍💻 Author
 
-Developed and maintained by **[Shubham Bhamare (@theshubh77)](https://github.com/theshubh77)**.
+Developed and maintained by **[Shubham Bhamare](https://github.com/theshubh77)**.
 
-If you find this project useful, please consider giving it a star! 🌟
+If you found this project helpful in launching your SaaS, consider giving the repository a ⭐!
 
 ---
 
-## 📄 License
+## 📜 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
