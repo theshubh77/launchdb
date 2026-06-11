@@ -27,6 +27,7 @@ jobs:
 
       - name: Update GitHub Repo Description
         if: ${{ steps.update_script.outputs.description != '' }}
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.PAT_REPO || secrets.GITHUB_TOKEN }}
           REPO_DESCRIPTION: ${{ steps.update_script.outputs.description }}
