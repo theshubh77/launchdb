@@ -134,23 +134,30 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     };
   }, [sparkColor, sparkSize, sparkRadius, sparkCount, duration, easeFunc, extraScale]);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+  useEffect(() => {
+    const handleGlobalClick = (e: MouseEvent) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
 
-    const now = performance.now();
-    const newSparks = Array.from({ length: sparkCount }, (_, i) => ({
-      x,
-      y,
-      angle: (2 * Math.PI * i) / sparkCount,
-      startTime: now
-    }));
+      const now = performance.now();
+      const newSparks = Array.from({ length: sparkCount }, (_, i) => ({
+        x,
+        y,
+        angle: (2 * Math.PI * i) / sparkCount,
+        startTime: now
+      }));
 
-    sparksRef.current.push(...newSparks);
-  };
+      sparksRef.current.push(...newSparks);
+    };
+
+    window.addEventListener('click', handleGlobalClick, { capture: true });
+    return () => {
+      window.removeEventListener('click', handleGlobalClick, { capture: true });
+    };
+  }, [sparkCount]);
 
   return (
     <div
@@ -159,7 +166,6 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
         width: '100%',
         minHeight: '100vh'
       }}
-      onClick={handleClick}
     >
       <canvas
         ref={canvasRef}
@@ -172,7 +178,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
           top: 0,
           left: 0,
           pointerEvents: 'none',
-          zIndex: 9999 // Ensure sparks render on top of all interactive elements
+          zIndex: 999999 // Ensure sparks render on top of all interactive elements and modals
         }}
       />
       {children}

@@ -1110,7 +1110,7 @@ export default function Home() {
   return (
     <div className="page-dark-bg">
       <ClickSpark
-        sparkColor={theme === "light" ? "magenta" : "#ffffff"}
+        sparkColor={theme === "light" ? "rgba(0, 0, 0, 0.4)" : "#ffffff"}
         sparkSize={10}
         sparkRadius={20}
         sparkCount={8}
