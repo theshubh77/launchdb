@@ -790,5 +790,23 @@
     "name": "Super Launch",
     "description": "A startup discovery and product launch platform for SaaS products, AI tools, and open-source projects.",
     "submission_link": "https://www.superlaun.ch/dashboard/submit"
+  },
+  {
+    "id": 133,
+    "name": "TopAITools4U",
+    "description": "A directory to discover the best AI tools for writing, design, coding, video, SEO, and productivity.",
+    "submission_link": "https://www.topaitools4u.site/submit"
+  },
+  {
+    "id": 134,
+    "name": "ShipBoost",
+    "description": "A founder-first SaaS launch platform that helps bootstrapped startups gain lasting visibility through launch boards, listings, and SEO-driven discovery.",
+    "submission_link": "https://shipboost.io/submit"
+  },
+  {
+    "id": 135,
+    "name": "AIBase",
+    "description": "A directory of AI tools, models, tutorials, and resources helping users discover solutions, learn faster, and build with AI every day.",
+    "submission_link": "https://app.aibase.com/submission"
   }
 ]
