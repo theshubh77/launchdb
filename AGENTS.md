@@ -57,5 +57,12 @@ If adding or modifying directory metadata, ensure platform classifiers inside [p
   - `<section>` for panels and directory lists.
   - `<article>` for individual directory cards.
 - **Metadata**: Static metadata values must be declared in [layout.tsx](app/layout.tsx).
-- **AIO/GEO**: Ensure the JSON-LD schema generated dynamically in `page.tsx` continues to list directory details correctly inside the head script.
-- **AEO**: Maintain the HTML FAQ layout at the bottom of the page, ensuring questions use proper `h3` tags with descriptive responses to let search scrapers index them for answers.
+- **AIO/GEO Schema Graph**: Ensure the JSON-LD schema generated dynamically in `page.tsx` maintains a connected Schema Graph consisting of:
+  - `WebSite`: Points to LaunchDB.
+  - `WebApplication`: Explains application category and operating system.
+  - `Person`: Shubham Bhamare, founder and creator, linked to his social accounts (`sameAs`) and avatar (`public/assets/shubham-bhamare.webp`).
+  - `FAQPage`: Schema mapping HTML FAQs for Answer Engine scraping.
+  - `ItemList`: The directory items list containing up to 50 active items.
+- **Dynamic Count Formatting**: Any SEO-related directories count must remain fully dynamic using the rounding formula (`Math.floor(count / 50) * 50` plus `+` when `>= 50`), ensuring consistency between page headers, HTML FAQs, metadata, and JSON-LD schema properties.
+- **AEO (Answer Engine Optimization)**: Maintain the HTML FAQ layout at the bottom of the page, ensuring questions use proper `h3` tags with descriptive responses to let search scrapers index them for answers.
+

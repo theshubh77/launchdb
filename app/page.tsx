@@ -1087,25 +1087,115 @@ export default function Home() {
 
   // Structured Data Schema for SEO/AIO/AEO/GEO
   const jsonLdSchema = useMemo(() => {
+    const activeDataset = allData.length > 0 ? allData : processedFallbackData;
     return {
       "@context": "https://schema.org",
-      "@type": "ItemList",
-      "name": `LaunchDB - ${formattedCount} SaaS Directories & Product Launchpads`,
-      "description": `A curated directory database of ${formattedCount} platforms and directories to launch your SaaS product, get backlinks, and reach early users.`,
-      "numberOfItems": allData.length,
-      "itemListElement": allData.slice(0, 50).map((item, index) => ({
-        "@type": "ListItem",
-        "position": index + 1,
-        "item": {
-          "@type": "SoftwareApplication",
-          "name": item.name.replace(/^(r\/|fb\/|gh\/|x\/)/i, ""),
-          "description": item.description,
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://launchdb.vercel.app/#website",
+          "url": "https://launchdb.vercel.app/",
+          "name": "LaunchDB",
+          "description": `Find the best SaaS directories and product launchpads to launch your SaaS, build SEO backlinks, and reach early adopters. Discover ${formattedCount} platforms.`,
+          "publisher": {
+            "@id": "https://launchdb.vercel.app/#person"
+          },
+          "author": {
+            "@id": "https://launchdb.vercel.app/#person"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://launchdb.vercel.app/#application",
+          "name": "LaunchDB",
+          "url": "https://launchdb.vercel.app/",
           "applicationCategory": "BusinessApplication",
-          "url": item.submission_link
+          "operatingSystem": "All",
+          "browserRequirements": "Requires JavaScript. Requires HTML5.",
+          "author": {
+            "@id": "https://launchdb.vercel.app/#person"
+          },
+          "creator": {
+            "@id": "https://launchdb.vercel.app/#person"
+          }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://launchdb.vercel.app/#person",
+          "name": "Shubham Bhamare",
+          "image": {
+            "@type": "ImageObject",
+            "url": "https://launchdb.vercel.app/assets/shubham-bhamare.webp"
+          },
+          "jobTitle": "Founder & Software Engineer",
+          "url": "https://linktr.ee/theshubh77",
+          "sameAs": [
+            "https://github.com/theshubh77",
+            "https://x.com/theshubh77",
+            "https://linkedin.com/in/theshubh77",
+            "https://facebook.com/theshubh77",
+            "https://instagram.com/theshubh77",
+            "https://medium.com/@theshubh77"
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://launchdb.vercel.app/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is LaunchDB?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": `LaunchDB is a list of active websites and platforms where you can launch your SaaS. We organize over ${formattedCount} web directories, subreddits (Reddit), X (Twitter) communities, Facebook groups, and GitHub repositories in one place. Founders use this list to find early users and grow their audience.`
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Why should I list my SaaS in directories?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Listing your SaaS in directories helps you get valuable backlinks that improve your website's search rankings (SEO). It also makes it easier for AI search tools like ChatGPT, Gemini, and Claude to discover your product. This helps you get your first users and gather early feedback."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How can I submit my own directory?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can suggest a new directory using our submit directory form or by contributing directly to our open-source GitHub repository. After you submit the form and pass our security check, we automatically create an issue. Once reviewed, it will go live in real-time."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How can I report a broken link?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "If you find a website that is down or inactive, click on our report a broken link form. Simply select the directory name from our dropdown list, choose the problem reason, and submit the form. Our team will verify the report and update the directory details accordingly."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "ItemList",
+          "@id": "https://launchdb.vercel.app/#itemlist",
+          "name": `LaunchDB - ${formattedCount} SaaS Directories & Product Launchpads`,
+          "description": `A curated directory database of ${formattedCount} platforms and directories to launch your SaaS product, get backlinks, and reach early users.`,
+          "numberOfItems": activeDataset.length,
+          "itemListElement": activeDataset.slice(0, 50).map((item, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+              "@type": "WebSite",
+              "name": item.name.replace(/^(r\/|fb\/|gh\/|x\/)/i, ""),
+              "description": item.description,
+              "url": item.submission_link
+            }
+          }))
         }
-      }))
+      ]
     };
-  }, [allData]);
+  }, [allData, formattedCount]);
 
   return (
     <div className="page-dark-bg">

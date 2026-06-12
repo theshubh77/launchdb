@@ -26,10 +26,16 @@ function getFormattedCount(count: number): string {
 const formattedCount = getFormattedCount(fallbackData.length);
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://launchdb.vercel.app"),
   title: `LaunchDB - ${formattedCount} SaaS Directories & Product Launchpads`,
   description: `Submit your SaaS to the best ${formattedCount} directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.`,
-  keywords: ["SaaS directories", "SaaS launch", "product launchpads", "indie hackers", "startup submit", "SEO backlinks", "get early users", "submit startup", "LaunchDB"],
-  authors: [{ name: "LaunchDB Community" }],
+  keywords: ["SaaS directories", "SaaS launch", "product launchpads", "indie hackers", "startup submit", "SEO backlinks", "get early users", "submit startup", "LaunchDB", "Shubham Bhamare", "theshubh77"],
+  authors: [
+    { name: "Shubham Bhamare", url: "https://linktr.ee/theshubh77" },
+    { name: "LaunchDB Community" }
+  ],
+  creator: "Shubham Bhamare",
+  publisher: "Shubham Bhamare",
   verification: {
     google: "HfkcazAHaDFansnXxLY1LSDeiDfJaSeXJZb-8W7hesc",
   },
@@ -40,11 +46,22 @@ export const metadata: Metadata = {
     siteName: "LaunchDB",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "LaunchDB - SaaS Directories & Product Launchpads",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `LaunchDB - ${formattedCount} SaaS Directories & Product Launchpads`,
     description: `Submit your SaaS to the best ${formattedCount} directories, find early adopters, and build high-quality SEO backlinks. Real-time community-driven database of product launchpads.`,
+    images: ["/og-image.jpg"],
+    creator: "@theshubh77",
+    site: "@theshubh77",
   },
   icons: {
     icon: [
