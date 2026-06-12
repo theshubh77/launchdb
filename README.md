@@ -1,4 +1,4 @@
-# LaunchDB
+# LaunchDB - 100+ Active Directories & Launchpads to Launch Your SaaS
 
 [![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-000000?style=flat&logo=vercel&logoColor=white)](https://launchdb.vercel.app/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](LICENSE)

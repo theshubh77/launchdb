@@ -30,15 +30,29 @@ async function main() {
     const readmePath = path.join(__dirname, '../README.md');
     if (fs.existsSync(readmePath)) {
       let readmeContent = fs.readFileSync(readmePath, 'utf8');
+      let updated = false;
 
       // Replace matching pattern "submit their SaaS to \d+\+ web directories"
       const readmeRegex = /(submit their SaaS to )\d+\+( web directories)/i;
       if (readmeRegex.test(readmeContent)) {
         readmeContent = readmeContent.replace(readmeRegex, `$1${countStr}$2`);
+        updated = true;
+      } else {
+        console.warn('Could not find matching body count pattern in README.md.');
+      }
+
+      // Replace matching pattern "# LaunchDB - \d+\+ Active Directories & Launchpads to Launch Your SaaS"
+      const readmeHeaderRegex = /(# LaunchDB - )\d+\+( Active Directories & Launchpads to Launch Your SaaS)/i;
+      if (readmeHeaderRegex.test(readmeContent)) {
+        readmeContent = readmeContent.replace(readmeHeaderRegex, `$1${countStr}$2`);
+        updated = true;
+      } else {
+        console.warn('Could not find matching header count pattern in README.md.');
+      }
+
+      if (updated) {
         fs.writeFileSync(readmePath, readmeContent, 'utf8');
         console.log('README.md updated successfully.');
-      } else {
-        console.warn('Could not find matching count pattern in README.md.');
       }
     } else {
       console.error('README.md not found.');
