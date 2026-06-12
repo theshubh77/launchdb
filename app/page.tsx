@@ -1147,7 +1147,7 @@ export default function Home() {
               "name": "What is LaunchDB?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": `LaunchDB is a list of active websites and platforms where you can launch your SaaS. We organize over ${formattedCount} web directories, subreddits (Reddit), X (Twitter) communities, Facebook groups, and GitHub repositories in one place. Founders use this list to find early users and grow their audience.`
+                "text": `LaunchDB is a list of active websites and platforms where you can launch your SaaS. We organize ${formattedCount} web directories, subreddits (Reddit), X (Twitter) communities, Facebook groups, and GitHub repositories in one place. Founders use this list to find early users and grow their audience.`
               }
             },
             {
@@ -1453,7 +1453,7 @@ export default function Home() {
                 <RocketLaunch size={22} /> What is LaunchDB?
               </h3>
               <p className="faq-answer">
-                LaunchDB is a list of active websites and platforms where you can launch your SaaS. We organize over {formattedCount} web directories, subreddits (Reddit), X (Twitter) communities, Facebook groups, and GitHub repositories in one place. Founders use this list to find early users and grow their audience.
+                LaunchDB is a list of active websites and platforms where you can launch your SaaS. We organize {formattedCount} web directories, subreddits (Reddit), X (Twitter) communities, Facebook groups, and GitHub repositories in one place. Founders use this list to find early users and grow their audience.
               </p>
             </div>
             
