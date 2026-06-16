@@ -1,9 +1,9 @@
-# LaunchDB - 100+ Active Directories & Launchpads to Launch Your SaaS
+# LaunchDB - 150+ Active Directories & Launchpads to Launch Your SaaS
 
 [![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-000000?style=flat&logo=vercel&logoColor=white)](https://launchdb.vercel.app/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](LICENSE)
 
-LaunchDB is an open-source directory platform designed for developers, founders, and indie hackers to submit their SaaS to 100+ web directories, subreddits, X communities, Facebook groups, and GitHub repositories to find early adopters and build high-quality SEO backlinks.
+LaunchDB is an open-source directory platform designed for developers, founders, and indie hackers to submit their SaaS to 150+ web directories, subreddits, X communities, Facebook groups, and GitHub repositories to find early adopters and build high-quality SEO backlinks.
 
 ### 💡 Why LaunchDB?
 
