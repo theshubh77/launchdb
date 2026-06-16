@@ -832,5 +832,53 @@
     "name": "ProductFame",
     "description": "A product launch platform where founders gain visibility and users discover new startups.",
     "submission_link": "https://productfame.com/products/submit"
+  },
+  {
+    "id": 140,
+    "name": "Lifto",
+    "description": "A video-first product launch and discovery platform for SaaS founders and early adopters.",
+    "submission_link": "https://liftoapp.com/submit"
+  },
+  {
+    "id": 141,
+    "name": "Findly.tools",
+    "description": "A curated online directory for SaaS and AI products to list projects, gain visibility, and secure backlinks.",
+    "submission_link": "https://findly.tools/submit"
+  },
+  {
+    "id": 142,
+    "name": "Verified Tools",
+    "description": "A curated startup directory for discovering, comparing, and listing AI tools and SaaS products.",
+    "submission_link": "https://www.verifiedtools.info/submit"
+  },
+  {
+    "id": 143,
+    "name": "Better Launch",
+    "description": "A product launch and discovery platform designed for founders, indie hackers, and early adopters to showcase digital products.",
+    "submission_link": "https://www.betterlaunch.co/submit"
+  },
+  {
+    "id": 144,
+    "name": "BuildHop",
+    "description": "A discovery platform designed for founders and builders to showcase startups, tools, and side projects.",
+    "submission_link": "https://buildhop.io/app/create"
+  },
+  {
+    "id": 145,
+    "name": "SaaS Page",
+    "description": "A community-driven launch directory and analytics platform for indie makers, solopreneurs, and SaaS founders.",
+    "submission_link": "https://www.saaspa.ge/submit"
+  },
+  {
+    "id": 146,
+    "name": "Pro Launch",
+    "description": "A product launch and discovery platform designed to help startups and indie hackers gain visibility.",
+    "submission_link": "https://prolaunch.net/projects/submit"
+  },
+  {
+    "id": 147,
+    "name": "Productivity Directory",
+    "description": "A curated directory of productivity software, tools, and resources to help users improve efficiency.",
+    "submission_link": "https://productivity.directory/s/submit"
   }
 ]
