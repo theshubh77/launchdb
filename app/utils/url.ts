@@ -7,6 +7,7 @@ export function addUtmToUrl(url: string, utmSource: string = "launchdb.vercel.ap
   try {
     const parsed = new URL(url);
     parsed.searchParams.set("utm_source", utmSource);
+    parsed.searchParams.set("via", "launchdb");
     return parsed.toString();
   } catch {
     return url;
@@ -18,6 +19,7 @@ export function removeUtmFromUrl(url: string): string {
   try {
     const parsed = new URL(url);
     parsed.searchParams.delete("utm_source");
+    parsed.searchParams.delete("via");
     return parsed.toString();
   } catch {
     return url;
