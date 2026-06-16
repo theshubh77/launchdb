@@ -46,6 +46,28 @@ const processedFallbackData: DirectoryItem[] = (fallbackData as DirectoryItem[])
   submission_link: addUtmToUrl(item.submission_link),
 }));
 
+const AUTOMATE_LAUNCH_URL = "https://www.aidirectori.es/?via=launchdb";
+
+const setCookie = (name: string, value: string, hours: number) => {
+  if (typeof window === "undefined") return;
+  const date = new Date();
+  date.setTime(date.getTime() + hours * 60 * 60 * 1000);
+  const expires = "; expires=" + date.toUTCString();
+  document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+};
+
+const getCookie = (name: string): string | null => {
+  if (typeof window === "undefined") return null;
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+};
+
 // URL regex with negative lookahead to prevent matching www as domain without secondary dot
 const urlRegex = /^https?:\/\/(?:www\.)?(?!www\.)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/i;
 
@@ -152,6 +174,53 @@ export default function Home() {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
+
+  // Promo popup states
+  const [showPromoPopup, setShowPromoPopup] = useState(false);
+  const [hasPromoTriggered, setHasPromoTriggered] = useState(false);
+  const [promoTriggerPercent, setPromoTriggerPercent] = useState<number | null>(null);
+
+  // Initialize random trigger percentage if cookie is not set
+  useEffect(() => {
+    const isDismissed = getCookie("launchdb_promo_dismissed");
+    if (!isDismissed) {
+      // Pick a random percentage between 25% and 65% of page scroll height
+      const randomPercent = Math.floor(Math.random() * (65 - 25 + 1)) + 25;
+      setPromoTriggerPercent(randomPercent);
+    }
+  }, []);
+
+  // Monitor scroll to trigger promo popup
+  useEffect(() => {
+    if (promoTriggerPercent === null || hasPromoTriggered) return;
+
+    const handlePromoScroll = () => {
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollableHeight <= 0) return;
+
+      const scrolledPercent = (window.scrollY / scrollableHeight) * 100;
+      if (scrolledPercent >= promoTriggerPercent) {
+        setShowPromoPopup(true);
+        setHasPromoTriggered(true);
+      }
+    };
+
+    window.addEventListener("scroll", handlePromoScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handlePromoScroll);
+    };
+  }, [promoTriggerPercent, hasPromoTriggered]);
+
+  const handleClosePromo = () => {
+    setCookie("launchdb_promo_dismissed", "true", 5);
+    setShowPromoPopup(false);
+  };
+
+  const handleCtaPromo = () => {
+    setCookie("launchdb_promo_dismissed", "true", 5);
+    setShowPromoPopup(false);
+    window.open(AUTOMATE_LAUNCH_URL, "_blank", "noopener,noreferrer");
+  };
 
   // Scroll handler for back to top button & hero blur animations
   useEffect(() => {
@@ -1597,6 +1666,9 @@ export default function Home() {
               <MediumLogo size={24} />
             </a>
           </div>
+          <p className="footer-disclosure">
+            Disclosure: To keep LaunchDB running, we may earn a commission from affiliate links, partner sponsorships, or support from community donations. Thank you for your support and understanding.
+          </p>
         </div>
       </footer>
 
@@ -2093,6 +2165,53 @@ export default function Home() {
               </div>
             </form>
           )}
+          </div>
+        </div>
+      )}
+
+      {/* Promo Popup Card */}
+      {showPromoPopup && (
+        <div className="promo-overlay">
+          <div 
+            className="promo-popup-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              type="button" 
+              className="modal-close-btn" 
+              onClick={handleClosePromo}
+              aria-label="Close promotion"
+              title="Close"
+            >
+              <X size={20} />
+            </button>
+            
+            <div className="promo-content">
+              <div className="promo-header">
+                <span className="promo-sponsored">Launch Partner</span>
+              </div>
+              
+              <h3 className="promo-title">
+                Wait! You're a <span className="highlight-gradient">Founder</span>, Not a Data Entry Clerk.
+              </h3>
+              
+              <p className="promo-subtitle">
+                Stop wasting your weekends filling out the same forms over and over. Let us do it for you.
+              </p>
+              
+              <p className="promo-body">
+                We manually submit your startup to 100+ high-impact directories, delivering the backlinks, SEO, and traffic you need to grow.
+              </p>
+              
+              <button 
+                type="button" 
+                onClick={handleCtaPromo}
+                className="promo-cta-btn"
+              >
+                <span>🚀</span>
+                <span>Automate My Launch</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
