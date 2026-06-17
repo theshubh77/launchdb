@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Script from "next/script";
 import { z } from "zod";
 import { 
@@ -30,6 +30,7 @@ import {
 } from "@phosphor-icons/react";
 import DirectoryCard from "../components/DirectoryCard";
 import StarBorder from "../components/StarBorder";
+import GlareEffect from "../components/GlareEffect";
 import ClickSpark from "../components/ClickSpark";
 import fallbackData from "../public/launchdb-fallback.json";
 import { addUtmToUrl, removeUtmFromUrl } from "./utils/url";
@@ -178,38 +179,19 @@ export default function Home() {
   // Promo popup states
   const [showPromoPopup, setShowPromoPopup] = useState(false);
   const [hasPromoTriggered, setHasPromoTriggered] = useState(false);
-  const [promoTriggerPercent, setPromoTriggerPercent] = useState<number | null>(null);
 
-  // Initialize random trigger percentage if cookie is not set
+  // Time fallback: show after 45 seconds of page explore time
   useEffect(() => {
     const isDismissed = getCookie("launchdb_promo_dismissed");
-    if (!isDismissed) {
-      // Pick a random percentage between 25% and 65% of page scroll height
-      const randomPercent = Math.floor(Math.random() * (65 - 25 + 1)) + 25;
-      setPromoTriggerPercent(randomPercent);
-    }
-  }, []);
+    if (isDismissed || hasPromoTriggered) return;
 
-  // Monitor scroll to trigger promo popup
-  useEffect(() => {
-    if (promoTriggerPercent === null || hasPromoTriggered) return;
+    const timer = setTimeout(() => {
+      setShowPromoPopup(true);
+      setHasPromoTriggered(true);
+    }, 45000);
 
-    const handlePromoScroll = () => {
-      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (scrollableHeight <= 0) return;
-
-      const scrolledPercent = (window.scrollY / scrollableHeight) * 100;
-      if (scrolledPercent >= promoTriggerPercent) {
-        setShowPromoPopup(true);
-        setHasPromoTriggered(true);
-      }
-    };
-
-    window.addEventListener("scroll", handlePromoScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handlePromoScroll);
-    };
-  }, [promoTriggerPercent, hasPromoTriggered]);
+    return () => clearTimeout(timer);
+  }, [hasPromoTriggered]);
 
   const handleClosePromo = () => {
     setCookie("launchdb_promo_dismissed", "true", 5);
@@ -220,6 +202,39 @@ export default function Home() {
     setCookie("launchdb_promo_dismissed", "true", 5);
     setShowPromoPopup(false);
     window.open(AUTOMATE_LAUNCH_URL, "_blank", "noopener,noreferrer");
+  };
+
+  // Bottom-Left Affiliate Strip states
+  const [showBottomStrip, setShowBottomStrip] = useState(false);
+  const stripTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startStripTimer = (delayMs: number) => {
+    if (stripTimerRef.current) clearTimeout(stripTimerRef.current);
+    stripTimerRef.current = setTimeout(() => {
+      setShowBottomStrip(true);
+    }, delayMs);
+  };
+
+  useEffect(() => {
+    // Start initial timer: show after 20 seconds
+    startStripTimer(20000);
+
+    return () => {
+      if (stripTimerRef.current) clearTimeout(stripTimerRef.current);
+    };
+  }, []);
+
+  const handleCloseBottomStrip = () => {
+    setShowBottomStrip(false);
+    // Re-trigger/show again after 60 seconds
+    startStripTimer(60000);
+  };
+
+  const handleCtaBottomStrip = () => {
+    setShowBottomStrip(false);
+    window.open(AUTOMATE_LAUNCH_URL, "_blank", "noopener,noreferrer");
+    // Re-trigger/show again after 120 seconds since they already interacted
+    startStripTimer(120000);
   };
 
   // Scroll handler for back to top button & hero blur animations
@@ -1153,6 +1168,51 @@ export default function Home() {
   const visibleItems = useMemo(() => {
     return filteredData.slice(0, visibleCount);
   }, [filteredData, visibleCount]);
+
+  // Monitor scroll to trigger promo popup (Client-side only)
+  useEffect(() => {
+    if (loading || hasPromoTriggered) return;
+
+    const isDismissed = getCookie("launchdb_promo_dismissed");
+    if (isDismissed) return;
+
+    const cards = document.querySelectorAll(".directory-grid > *");
+    if (cards.length === 0) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        // Trigger if target card is inside viewport or has been scrolled past
+        if (entry.isIntersecting || entry.boundingClientRect.top < 0) {
+          const width = window.innerWidth;
+          let targetIndex = 8; // mobile: 9th card (index 8)
+          if (width >= 1024) {
+            targetIndex = 35; // desktop: 36th card (index 35)
+          } else if (width >= 640) {
+            targetIndex = 17; // tablet: 18th card (index 17)
+          }
+
+          if (entry.target === cards[targetIndex]) {
+            setShowPromoPopup(true);
+            setHasPromoTriggered(true);
+            observer.disconnect();
+          }
+        }
+      });
+    }, {
+      rootMargin: "0px 0px -50px 0px"
+    });
+
+    // Observe potential trigger cards to handle resize or responsive layouts dynamically
+    const cardMobile = cards[8];
+    const cardTablet = cards[17];
+    const cardDesktop = cards[35];
+
+    if (cardMobile) observer.observe(cardMobile);
+    if (cardTablet) observer.observe(cardTablet);
+    if (cardDesktop) observer.observe(cardDesktop);
+
+    return () => observer.disconnect();
+  }, [loading, hasPromoTriggered, visibleItems]);
 
   // Structured Data Schema for SEO/AIO/AEO/GEO
   const jsonLdSchema = useMemo(() => {
@@ -2215,6 +2275,52 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* Bottom-Left Affiliate Strip */}
+      <div className={`bottom-left-strip ${showBottomStrip ? "visible" : ""}`}>
+        <GlareEffect
+          width="100%"
+          height="auto"
+          background="transparent"
+          borderColor="transparent"
+          borderRadius="var(--border-radius-md)"
+          glareColor={theme === "dark" ? "#ffffff" : "#6366f1"}
+          glareOpacity={theme === "dark" ? 0.3 : 0.15}
+          glareAngle={-30}
+          glareSize={300}
+        >
+          <div className="strip-inner">
+            <button 
+              type="button" 
+              className="strip-close-btn" 
+              onClick={handleCloseBottomStrip}
+              aria-label="Close message"
+              title="Close"
+            >
+              <X size={16} />
+            </button>
+            <div className="strip-header" style={{ marginBottom: "0.5rem" }}>
+              <span className="promo-sponsored">Launch Partner</span>
+            </div>
+            <div className="strip-content">
+              <div>Stop wasting your weekends filling out the same forms over and over to submit your startup.</div>
+              <div 
+                className="strip-link" 
+                onClick={handleCtaBottomStrip}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleCtaBottomStrip();
+                  }
+                }}
+              >
+                LET US DO IT FOR YOU ↗
+              </div>
+            </div>
+          </div>
+        </GlareEffect>
+      </div>
 
       <button
         onClick={scrollToTop}

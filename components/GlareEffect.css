@@ -1,0 +1,50 @@
+.glare-effect {
+  width: var(--ge-width);
+  height: var(--ge-height);
+  background: var(--ge-bg);
+  border-radius: var(--ge-br);
+  border: 1px solid var(--ge-border);
+  overflow: hidden;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.glare-effect::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    var(--ge-angle),
+    hsla(0, 0%, 0%, 0) 60%,
+    var(--ge-rgba) 70%,
+    hsla(0, 0%, 0%, 0),
+    hsla(0, 0%, 0%, 0) 100%
+  );
+  background-size:
+    var(--ge-size) var(--ge-size),
+    100% 100%;
+  background-repeat: no-repeat;
+  background-position:
+    -100% -100%,
+    0 0;
+  z-index: 5;
+  pointer-events: none;
+  /* Run animation continuously with a pause:
+     Let's sweep over 5 seconds, then pause for 3 seconds.
+     Total duration: 8 seconds.
+     Sweep is from 0% to 62.5% (62.5% of 8s = 5s). */
+  animation: glare-periodic-shine 8s infinite ease-in-out;
+}
+
+@keyframes glare-periodic-shine {
+  0% {
+    background-position: -100% -100%, 0 0;
+  }
+  62.5% {
+    background-position: 100% 100%, 0 0;
+  }
+  100% {
+    background-position: 100% 100%, 0 0;
+  }
+}
