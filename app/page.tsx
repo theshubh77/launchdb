@@ -47,7 +47,7 @@ const processedFallbackData: DirectoryItem[] = (fallbackData as DirectoryItem[])
   submission_link: addUtmToUrl(item.submission_link),
 }));
 
-const AUTOMATE_LAUNCH_URL = "https://www.aidirectori.es/?via=launchdb";
+const AUTOMATE_LAUNCH_URL = "https://www.aidirectori.es/pricing?tab=directory-submissions&via=launchdb";
 
 const setCookie = (name: string, value: string, hours: number) => {
   if (typeof window === "undefined") return;
