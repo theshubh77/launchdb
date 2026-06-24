@@ -1651,6 +1651,27 @@ export default function Home() {
 
       <footer className="site-footer">
         <div className="container footer-content">
+          <div className="peerlist-badge-container">
+            <a 
+              href="https://peerlist.io/theshubh77/project/launchdb" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="peerlist-link"
+            >
+              <img
+                src="https://dqy38fnwh4fqs.cloudfront.net/website/project-spotlight/project-week-rank-three-dark.svg"
+                alt="LaunchDB on Peerlist"
+                className="peerlist-badge peerlist-badge-dark"
+                style={{ width: "auto", height: "64px" }}
+              />
+              <img
+                src="https://dqy38fnwh4fqs.cloudfront.net/website/project-spotlight/project-week-rank-three-light.svg"
+                alt="LaunchDB on Peerlist"
+                className="peerlist-badge peerlist-badge-light"
+                style={{ width: "auto", height: "64px" }}
+              />
+            </a>
+          </div>
           <p className="footer-text">
             Built with <span className="pulsing-heart">❤️</span> by{" "}
             <span className="footer-author-wrapper">

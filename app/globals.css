@@ -1146,6 +1146,34 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
+/* Peerlist Badge Styles */
+.peerlist-badge-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.peerlist-link {
+  display: inline-block;
+  transition: transform var(--transition-normal);
+}
+
+.peerlist-link:hover {
+  transform: translateY(-2px);
+}
+
+.peerlist-badge {
+  display: none;
+}
+
+:root[data-theme="dark"] .peerlist-badge-dark {
+  display: block;
+}
+
+:root[data-theme="light"] .peerlist-badge-light {
+  display: block;
+}
+
 .footer-disclosure {
   font-size: 0.8rem;
   color: #cbd5e1; /* Same as site-footer / social icons */
