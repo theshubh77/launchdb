@@ -26,6 +26,21 @@ Platform tags on cards are customized using Phosphor icons and harmonized transl
 - **GitHub**: Off-white/slate (`#c9d1d9`)
 - **Web Directory**: Emerald green (`#10b981`)
 
+### Domain Rating (DR) Pill
+For Web Directories with a valid rating, a Domain Rating (DR) pill is displayed:
+- **Style**: Soft accent background (`rgba(37, 99, 235, 0.08)` on dark, `0.05` on light) and solid `--accent-primary` text.
+- **Position**: Aligned horizontally in the same row, positioned **before** (to the left of) the "Web Directory" badge.
+- **Cursor & Selection**: Configured with `cursor: default` and `user-select: none` to prevent text-selection highlights.
+
+### Native Tooltips
+All platform chips and DR pills implement legacy, native browser tooltips via the standard HTML `title` attribute for clean accessibility:
+- **DR Pill**: `title="Domain Rating powered by Ahrefs"`
+- **Web Directory Chip**: `title="Web Directory"`
+- **Reddit Chip**: `title="Reddit Community"`
+- **X (Twitter) Chip**: `title="X (Twitter) Community"`
+- **Facebook Chip**: `title="Facebook Group"`
+- **GitHub Chip**: `title="GitHub Repository"`
+
 ---
 
 ## 2. Typography

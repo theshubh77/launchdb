@@ -16,6 +16,8 @@ interface DirectoryItem {
   name: string;
   description: string;
   submission_link: string;
+  domain_rating?: number | null;
+  dr_last_updated?: string | null;
 }
 
 interface DirectoryCardProps {
@@ -48,34 +50,39 @@ export default function DirectoryCard({ item, theme }: DirectoryCardProps) {
       return {
         label: "Reddit",
         class: "reddit",
-        icon: <RedditLogo size={16} weight="fill" />
+        icon: <RedditLogo size={16} weight="fill" />,
+        tooltip: "Reddit Community"
       };
     }
     if (nameLower.startsWith("x/") || /(?:^|[^a-z0-9-])(?:x|twitter)\.com(?:\/|\?|#|:|$)/i.test(linkLower)) {
       return {
         label: "X (Twitter)",
         class: "x",
-        icon: <XLogo size={16} weight="bold" />
+        icon: <XLogo size={16} weight="bold" />,
+        tooltip: "X (Twitter) Community"
       };
     }
     if (nameLower.startsWith("fb/") || /(?:^|[^a-z0-9-])(?:facebook|fb)\.com(?:\/|\?|#|:|$)/i.test(linkLower)) {
       return {
         label: "Facebook",
         class: "facebook",
-        icon: <FacebookLogo size={16} weight="fill" />
+        icon: <FacebookLogo size={16} weight="fill" />,
+        tooltip: "Facebook Group"
       };
     }
     if (nameLower.startsWith("gh/") || /(?:^|[^a-z0-9-])github\.com(?:\/|\?|#|:|$)/i.test(linkLower)) {
       return {
         label: "GitHub",
         class: "github",
-        icon: <GithubLogo size={16} weight="fill" />
+        icon: <GithubLogo size={16} weight="fill" />,
+        tooltip: "GitHub Repository"
       };
     }
     return {
       label: "Web Directory",
       class: "web",
-      icon: <Globe size={16} weight="bold" />
+      icon: <Globe size={16} weight="bold" />,
+      tooltip: "Web Directory"
     };
   };
 
@@ -107,10 +114,23 @@ export default function DirectoryCard({ item, theme }: DirectoryCardProps) {
             </span>
           )}
         </div>
-        <span className={`platform-chip ${platform.class}`}>
-          {platform.icon}
-          {platform.label}
-        </span>
+        <div className="card-badges">
+          {platform.class === "web" && item.domain_rating !== undefined && item.domain_rating !== null && (
+            <span 
+              className="dr-pill" 
+              title="Domain Rating powered by Ahrefs"
+            >
+              DR {item.domain_rating}
+            </span>
+          )}
+          <span 
+            className={`platform-chip ${platform.class}`}
+            title={platform.tooltip}
+          >
+            {platform.icon}
+            {platform.label}
+          </span>
+        </div>
       </div>
 
       <div className="card-body">
