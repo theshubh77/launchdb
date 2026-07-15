@@ -40,6 +40,8 @@ interface DirectoryItem {
   name: string;
   description: string;
   submission_link: string;
+  domain_rating?: number | null;
+  dr_last_updated?: string | null;
 }
 
 const processedFallbackData: DirectoryItem[] = (fallbackData as DirectoryItem[]).map((item) => ({
