@@ -120,7 +120,7 @@ export default function DirectoryCard({ item, theme }: DirectoryCardProps) {
               className="dr-pill" 
               title="Domain Rating powered by Ahrefs"
             >
-              DR {item.domain_rating}
+              DR: {item.domain_rating}
             </span>
           )}
           <span 
