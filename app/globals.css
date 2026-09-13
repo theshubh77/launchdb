@@ -1148,32 +1148,162 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
-/* Peerlist Badge Styles */
-.peerlist-badge-container {
+/* Featured Badges Infinite Horizontal Marquee */
+.badges-marquee-container {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto 0.75rem auto;
+  position: relative;
+  overflow: hidden;
   display: flex;
   justify-content: center;
-  margin-bottom: 0.75rem;
+  padding: 4px 0;
 }
 
+.badges-marquee {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+  padding: 6px 0;
+  /* Smooth horizontal edge fade */
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 6%,
+    black 94%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 6%,
+    black 94%,
+    transparent 100%
+  );
+}
+
+.badges-track {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 1.5rem;
+  padding-right: 1.5rem;
+  animation: badgesMarqueeScroll 28s linear infinite;
+  will-change: transform;
+}
+
+/* Pause animation on hover or focus so badges are effortless to click */
+.badges-marquee:hover .badges-track,
+.badges-marquee:focus-within .badges-track {
+  animation-play-state: paused;
+}
+
+@keyframes badgesMarqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.footer-badge-link,
 .peerlist-link {
-  display: inline-block;
-  transition: transform var(--transition-normal);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-decoration: none;
+  border-radius: var(--border-radius-sm);
+  transition: transform var(--transition-normal), filter var(--transition-normal);
 }
 
+.footer-badge-link:hover,
 .peerlist-link:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.02);
 }
 
+.footer-badge-img,
 .peerlist-badge {
+  display: block;
+  width: auto;
+  height: 56px;
+  max-height: 60px;
+  object-fit: contain;
+}
+
+/* Themed badges: hide non-matching variants */
+.badge-theme-dark,
+.peerlist-badge-dark {
   display: none;
 }
 
+.badge-theme-light,
+.peerlist-badge-light {
+  display: none;
+}
+
+:root[data-theme="dark"] .badge-theme-dark,
 :root[data-theme="dark"] .peerlist-badge-dark {
   display: block;
 }
 
+:root[data-theme="light"] .badge-theme-light,
 :root[data-theme="light"] .peerlist-badge-light {
   display: block;
+}
+
+/* Accessibility: respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .badges-track {
+    animation: none;
+  }
+  .badges-marquee {
+    mask-image: none;
+    -webkit-mask-image: none;
+    overflow-x: auto;
+    justify-content: center;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+  .badges-marquee-container {
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .badges-marquee {
+    padding: 4px 0;
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 5%,
+      black 95%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 5%,
+      black 95%,
+      transparent 100%
+    );
+  }
+
+  .badges-track {
+    gap: 1.15rem;
+    padding-right: 1.15rem;
+    animation-duration: 22s;
+  }
+
+  .footer-badge-img,
+  .peerlist-badge {
+    height: 48px;
+    max-height: 48px;
+  }
 }
 
 .footer-disclosure {

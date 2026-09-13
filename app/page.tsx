@@ -51,6 +51,55 @@ const processedFallbackData: DirectoryItem[] = (fallbackData as DirectoryItem[])
 
 const AUTOMATE_LAUNCH_URL = "https://www.aidirectori.es/pricing?tab=directory-submissions&via=launchdb";
 
+interface FooterBadgeItem {
+  id: string;
+  name: string;
+  href: string;
+  // Use darkSrc & lightSrc if the badge has distinct theme assets
+  darkSrc?: string;
+  lightSrc?: string;
+  // Or use src if the badge uses a single image across both themes
+  src?: string;
+  alt: string;
+  height?: number;
+}
+
+// Featured badges & awards displayed in the footer infinite horizontal scroll marquee.
+// Add any additional badges here (Product Hunt, Devhunt, Uneed, etc.)!
+const FOOTER_BADGES: FooterBadgeItem[] = [
+  {
+    id: "peerlist-spotlight",
+    name: "LaunchDB on Peerlist",
+    href: "https://peerlist.io/theshubh77/project/launchdb",
+    darkSrc: "https://dqy38fnwh4fqs.cloudfront.net/website/project-spotlight/project-week-rank-three-dark.svg",
+    lightSrc: "https://dqy38fnwh4fqs.cloudfront.net/website/project-spotlight/project-week-rank-three-light.svg",
+    alt: "LaunchDB on Peerlist",
+    height: 56,
+  },
+  {
+    id: "product-hunt-follow",
+    name: "LaunchDB on Product Hunt",
+    href: "https://www.producthunt.com/products/launchdb?utm_source=badge-follow&utm_medium=badge&utm_source=badge-launchdb",
+    darkSrc: "https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=1245584&theme=dark",
+    lightSrc: "https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=1245584&theme=light",
+    alt: "LaunchDB - 100+ Active Directories & Launchpads to Launch Your SaaS | Product Hunt",
+    height: 54,
+  },
+  {
+    id: "nick-launches-featured",
+    name: "LaunchDB on Nick Launches",
+    href: "https://nicklaunches.com/products/launchdb/?utm_source=launchdb.vercel.app&utm_medium=badge&utm_campaign=featured",
+    darkSrc: "https://nicklaunches.com/badges/featured-dark.png",
+    lightSrc: "https://nicklaunches.com/badges/featured.png",
+    alt: "LaunchDB on Nick Launches",
+    height: 56,
+  },
+];
+
+// Ensure enough badge repetitions in the marquee track so it seamlessly spans wide viewports without gaps
+const BADGE_REPEAT_COUNT = Math.max(1, Math.ceil(6 / Math.max(1, FOOTER_BADGES.length)));
+const MARQUEE_BADGES = Array.from({ length: BADGE_REPEAT_COUNT }, () => FOOTER_BADGES).flat();
+
 const setCookie = (name: string, value: string, hours: number) => {
   if (typeof window === "undefined") return;
   const date = new Date();
@@ -1653,26 +1702,82 @@ export default function Home() {
 
       <footer className="site-footer">
         <div className="container footer-content">
-          <div className="peerlist-badge-container">
-            <a 
-              href="https://peerlist.io/theshubh77/project/launchdb" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="peerlist-link"
-            >
-              <img
-                src="https://dqy38fnwh4fqs.cloudfront.net/website/project-spotlight/project-week-rank-three-dark.svg"
-                alt="LaunchDB on Peerlist"
-                className="peerlist-badge peerlist-badge-dark"
-                style={{ width: "auto", height: "64px" }}
-              />
-              <img
-                src="https://dqy38fnwh4fqs.cloudfront.net/website/project-spotlight/project-week-rank-three-light.svg"
-                alt="LaunchDB on Peerlist"
-                className="peerlist-badge peerlist-badge-light"
-                style={{ width: "auto", height: "64px" }}
-              />
-            </a>
+          {/* Infinite Horizontal Badges Marquee */}
+          <div className="badges-marquee-container peerlist-badge-container">
+            <div className="badges-marquee" aria-label="Featured Badges and Awards">
+              <div className="badges-track">
+                {MARQUEE_BADGES.map((badge, idx) => (
+                  <a 
+                    key={`badge-track-1-${badge.id}-${idx}`}
+                    href={badge.href} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="footer-badge-link peerlist-link"
+                    title={badge.name}
+                  >
+                    {badge.darkSrc && badge.lightSrc ? (
+                      <>
+                        <img
+                          src={badge.darkSrc}
+                          alt={badge.alt}
+                          className="footer-badge-img peerlist-badge peerlist-badge-dark badge-theme-dark"
+                          style={{ width: "auto", height: `${badge.height || 56}px` }}
+                        />
+                        <img
+                          src={badge.lightSrc}
+                          alt={badge.alt}
+                          className="footer-badge-img peerlist-badge peerlist-badge-light badge-theme-light"
+                          style={{ width: "auto", height: `${badge.height || 56}px` }}
+                        />
+                      </>
+                    ) : (
+                      <img
+                        src={badge.src}
+                        alt={badge.alt}
+                        className="footer-badge-img"
+                        style={{ width: "auto", height: `${badge.height || 56}px` }}
+                      />
+                    )}
+                  </a>
+                ))}
+              </div>
+              <div className="badges-track" aria-hidden="true">
+                {MARQUEE_BADGES.map((badge, idx) => (
+                  <a 
+                    key={`badge-track-2-${badge.id}-${idx}`}
+                    href={badge.href} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="footer-badge-link peerlist-link"
+                    tabIndex={-1}
+                  >
+                    {badge.darkSrc && badge.lightSrc ? (
+                      <>
+                        <img
+                          src={badge.darkSrc}
+                          alt=""
+                          className="footer-badge-img peerlist-badge peerlist-badge-dark badge-theme-dark"
+                          style={{ width: "auto", height: `${badge.height || 56}px` }}
+                        />
+                        <img
+                          src={badge.lightSrc}
+                          alt=""
+                          className="footer-badge-img peerlist-badge peerlist-badge-light badge-theme-light"
+                          style={{ width: "auto", height: `${badge.height || 56}px` }}
+                        />
+                      </>
+                    ) : (
+                      <img
+                        src={badge.src}
+                        alt=""
+                        className="footer-badge-img"
+                        style={{ width: "auto", height: `${badge.height || 56}px` }}
+                      />
+                    )}
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
           <p className="footer-text">
             Built with <span className="pulsing-heart">❤️</span> by{" "}
