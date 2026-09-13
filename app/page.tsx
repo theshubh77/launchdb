@@ -94,6 +94,15 @@ const FOOTER_BADGES: FooterBadgeItem[] = [
     alt: "LaunchDB on Nick Launches",
     height: 56,
   },
+  {
+    id: "saascity-featured",
+    name: "Featured on SaaSCity",
+    href: "https://saascity.io",
+    darkSrc: "https://saascity.io/badges/featured-dark.svg",
+    lightSrc: "https://saascity.io/badges/featured-light.svg",
+    alt: "Featured on SaaSCity",
+    height: 54,
+  },
 ];
 
 // Ensure enough badge repetitions in the marquee track so it seamlessly spans wide viewports without gaps
