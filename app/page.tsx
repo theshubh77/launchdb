@@ -96,11 +96,11 @@ const FOOTER_BADGES: FooterBadgeItem[] = [
   },
   {
     id: "saascity-featured",
-    name: "Featured on SaaSCity",
-    href: "https://saascity.io",
+    name: "LaunchDB on SaasCity",
+    href: "https://saascity.io/live/launchdb",
     darkSrc: "https://saascity.io/badges/featured-dark.svg",
     lightSrc: "https://saascity.io/badges/featured-light.svg",
-    alt: "Featured on SaaSCity",
+    alt: "LaunchDB on SaasCity",
     height: 54,
   },
 ];
@@ -1729,12 +1729,14 @@ export default function Home() {
                         <img
                           src={badge.darkSrc}
                           alt={badge.alt}
+                          title={badge.name}
                           className="footer-badge-img peerlist-badge peerlist-badge-dark badge-theme-dark"
                           style={{ width: "auto", height: `${badge.height || 56}px` }}
                         />
                         <img
                           src={badge.lightSrc}
                           alt={badge.alt}
+                          title={badge.name}
                           className="footer-badge-img peerlist-badge peerlist-badge-light badge-theme-light"
                           style={{ width: "auto", height: `${badge.height || 56}px` }}
                         />
@@ -1743,6 +1745,7 @@ export default function Home() {
                       <img
                         src={badge.src}
                         alt={badge.alt}
+                        title={badge.name}
                         className="footer-badge-img"
                         style={{ width: "auto", height: `${badge.height || 56}px` }}
                       />
@@ -1758,19 +1761,22 @@ export default function Home() {
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="footer-badge-link peerlist-link"
+                    title={badge.name}
                     tabIndex={-1}
                   >
                     {badge.darkSrc && badge.lightSrc ? (
                       <>
                         <img
                           src={badge.darkSrc}
-                          alt=""
+                          alt={badge.alt}
+                          title={badge.name}
                           className="footer-badge-img peerlist-badge peerlist-badge-dark badge-theme-dark"
                           style={{ width: "auto", height: `${badge.height || 56}px` }}
                         />
                         <img
                           src={badge.lightSrc}
-                          alt=""
+                          alt={badge.alt}
+                          title={badge.name}
                           className="footer-badge-img peerlist-badge peerlist-badge-light badge-theme-light"
                           style={{ width: "auto", height: `${badge.height || 56}px` }}
                         />
@@ -1778,7 +1784,8 @@ export default function Home() {
                     ) : (
                       <img
                         src={badge.src}
-                        alt=""
+                        alt={badge.alt}
+                        title={badge.name}
                         className="footer-badge-img"
                         style={{ width: "auto", height: `${badge.height || 56}px` }}
                       />
