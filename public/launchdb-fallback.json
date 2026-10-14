@@ -1322,9 +1322,9 @@
     "id": 168,
     "name": "Launchory",
     "description": "A startup directory where founders submit a product for free and get an approved listing with a dofollow link, upvotes, and a public profile page.",
-    "domain_rating": 60,
+    "domain_rating": 54,
     "submission_link": "https://www.launchory.app/submit",
-    "dr_last_updated": "2026-09-14"
+    "dr_last_updated": "2026-10-14"
   },
   {
     "id": 169,
@@ -1409,9 +1409,9 @@
     "id": 179,
     "name": "Nick Launches",
     "description": "A weekly product launch platform and directory for indie builders to launch products, gain community visibility, and earn backlinks.",
-    "domain_rating": 75,
+    "domain_rating": 76,
     "submission_link": "https://nicklaunches.com/submit",
-    "dr_last_updated": "2026-09-13"
+    "dr_last_updated": "2026-10-13"
   },
   {
     "id": 180,
@@ -1419,7 +1419,7 @@
     "description": "A curated directory of online photo editing tools and web-based image utilities.",
     "domain_rating": 0,
     "submission_link": "https://phototoolfinder.com/submit",
-    "dr_last_updated": "2026-09-13"
+    "dr_last_updated": "2026-10-13"
   },
   {
     "id": 181,
@@ -1468,5 +1468,21 @@
     "domain_rating": 37,
     "submission_link": "https://www.makermap.lol/products",
     "dr_last_updated": "2026-10-07"
+  },
+  {
+    "id": 187,
+    "name": "Postmake",
+    "description": "A curated directory of tools and resources for startups, founders, and developers.",
+    "domain_rating": 51,
+    "submission_link": "https://postmake.io/submit",
+    "dr_last_updated": "2026-10-14"
+  },
+  {
+    "id": 188,
+    "name": "ShipGrowth",
+    "description": "A curated directory to discover and submit AI products and tools to boost visibility.",
+    "domain_rating": 51,
+    "submission_link": "https://shipgrowth.dev/submit",
+    "dr_last_updated": "2026-10-14"
   }
 ]
